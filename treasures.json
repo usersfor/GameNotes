@@ -1,0 +1,520 @@
+{
+  "meta": {
+    "snapshot_date": "2026-08-20",
+    "total": 8
+  },
+  "treasures": [
+    {
+      "name": "晶化珊瑚",
+      "image": "hyperframes/晶化珊瑚.png",
+      "ports": [
+        {
+          "name": "奥托皮亚",
+          "image": "hyperframes/奥托皮亚.png",
+          "flag_image": "hyperframes/奥托皮亚旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 140940
+          }
+        },
+        {
+          "name": "瑞文斯克",
+          "image": "hyperframes/瑞文斯克.png",
+          "flag_image": "hyperframes/瑞文斯克旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 170302
+          }
+        },
+        {
+          "name": "迈克尔",
+          "image": "hyperframes/迈克尔.png",
+          "flag_image": "hyperframes/迈克尔旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        },
+        {
+          "name": "托尼诺",
+          "image": "hyperframes/托尼诺.png",
+          "flag_image": "hyperframes/托尼诺旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        }
+      ],
+      "tiers": {
+        "grey": {
+          "min": 11475,
+          "max": 16443
+        },
+        "green": {
+          "min": 20655,
+          "max": 29597
+        },
+        "blue": {
+          "min": 29835,
+          "max": 42751
+        },
+        "purple": {
+          "min": 94500,
+          "max": 170302
+        },
+        "gold": {
+          "min": 5225,
+          "max": 5225
+        }
+      }
+    },
+    {
+      "name": "神秘海游记",
+      "image": "hyperframes/神秘海游记.png",
+      "ports": [
+        {
+          "name": "奥托皮亚",
+          "image": "hyperframes/奥托皮亚.png",
+          "flag_image": "hyperframes/奥托皮亚旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 254475
+          }
+        },
+        {
+          "name": "瑞文斯克",
+          "image": "hyperframes/瑞文斯克.png",
+          "flag_image": "hyperframes/瑞文斯克旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        },
+        {
+          "name": "迈克尔",
+          "image": "hyperframes/迈克尔.png",
+          "flag_image": "hyperframes/迈克尔旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 138982
+          }
+        },
+        {
+          "name": "托尼诺",
+          "image": "hyperframes/托尼诺.png",
+          "flag_image": "hyperframes/托尼诺旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        }
+      ],
+      "tiers": {
+        "grey": {
+          "min": 11475,
+          "max": 16443
+        },
+        "green": {
+          "min": 20655,
+          "max": 29597
+        },
+        "blue": {
+          "min": 29835,
+          "max": 42751
+        },
+        "purple": {
+          "min": 139050,
+          "max": 254475
+        },
+        "gold": {
+          "min": 5225,
+          "max": 5225
+        }
+      }
+    },
+    {
+      "name": "\"无尽\"冠冕",
+      "image": "hyperframes/\"无尽\"冠冕.png",
+      "ports": [
+        {
+          "name": "奥托皮亚",
+          "image": "hyperframes/奥托皮亚.png",
+          "flag_image": "hyperframes/奥托皮亚旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        },
+        {
+          "name": "瑞文斯克",
+          "image": "hyperframes/瑞文斯克.png",
+          "flag_image": "hyperframes/瑞文斯克旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 148770
+          }
+        },
+        {
+          "name": "迈克尔",
+          "image": "hyperframes/迈克尔.png",
+          "flag_image": "hyperframes/迈克尔旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        },
+        {
+          "name": "托尼诺",
+          "image": "hyperframes/托尼诺.png",
+          "flag_image": "hyperframes/托尼诺旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        }
+      ],
+      "tiers": {
+        "grey": {
+          "min": 11475,
+          "max": 16443
+        },
+        "green": {
+          "min": 20655,
+          "max": 29597
+        },
+        "blue": {
+          "min": 29835,
+          "max": 42751
+        },
+        "purple": {
+          "min": 135000,
+          "max": 148770
+        },
+        "gold": {
+          "min": 5225,
+          "max": 5225
+        }
+      }
+    },
+    {
+      "name": "叠轨天体仪",
+      "image": "hyperframes/叠轨天体仪.png",
+      "ports": [
+        {
+          "name": "奥托皮亚",
+          "image": "hyperframes/奥托皮亚.png",
+          "flag_image": "hyperframes/奥托皮亚旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 144855
+          }
+        },
+        {
+          "name": "瑞文斯克",
+          "image": "hyperframes/瑞文斯克.png",
+          "flag_image": "hyperframes/瑞文斯克旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 140940
+          }
+        },
+        {
+          "name": "迈克尔",
+          "image": "hyperframes/迈克尔.png",
+          "flag_image": "hyperframes/迈克尔旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        },
+        {
+          "name": "托尼诺",
+          "image": "hyperframes/托尼诺.png",
+          "flag_image": "hyperframes/托尼诺旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        }
+      ],
+      "tiers": {
+        "grey": {
+          "min": 11475,
+          "max": 16443
+        },
+        "green": {
+          "min": 20655,
+          "max": 29597
+        },
+        "blue": {
+          "min": 29835,
+          "max": 42751
+        },
+        "purple": {
+          "min": 97200,
+          "max": 144855
+        },
+        "gold": {
+          "min": 5225,
+          "max": 5225
+        }
+      }
+    },
+    {
+      "name": "英灵匣",
+      "image": "hyperframes/英灵匣.png",
+      "ports": [
+        {
+          "name": "奥托皮亚",
+          "image": "hyperframes/奥托皮亚.png",
+          "flag_image": "hyperframes/奥托皮亚旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 205537
+          }
+        },
+        {
+          "name": "瑞文斯克",
+          "image": "hyperframes/瑞文斯克.png",
+          "flag_image": "hyperframes/瑞文斯克旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        },
+        {
+          "name": "迈克尔",
+          "image": "hyperframes/迈克尔.png",
+          "flag_image": "hyperframes/迈克尔旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        },
+        {
+          "name": "托尼诺",
+          "image": "hyperframes/托尼诺.png",
+          "flag_image": "hyperframes/托尼诺旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        }
+      ],
+      "tiers": {
+        "grey": {
+          "min": 11475,
+          "max": 16443
+        },
+        "green": {
+          "min": 20655,
+          "max": 29597
+        },
+        "blue": {
+          "min": 29835,
+          "max": 42751
+        },
+        "purple": {
+          "min": 129600,
+          "max": 205537
+        },
+        "gold": {
+          "min": 5225,
+          "max": 5225
+        }
+      }
+    },
+    {
+      "name": "霞光壶",
+      "image": "hyperframes/霞光壶.png",
+      "ports": [
+        {
+          "name": "奥托皮亚",
+          "image": "hyperframes/奥托皮亚.png",
+          "flag_image": "hyperframes/奥托皮亚旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 176175
+          }
+        },
+        {
+          "name": "瑞文斯克",
+          "image": "hyperframes/瑞文斯克.png",
+          "flag_image": "hyperframes/瑞文斯克旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        },
+        {
+          "name": "迈克尔",
+          "image": "hyperframes/迈克尔.png",
+          "flag_image": "hyperframes/迈克尔旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        },
+        {
+          "name": "托尼诺",
+          "image": "hyperframes/托尼诺.png",
+          "flag_image": "hyperframes/托尼诺旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        }
+      ],
+      "tiers": {
+        "grey": {
+          "min": 11475,
+          "max": 16443
+        },
+        "green": {
+          "min": 20655,
+          "max": 29597
+        },
+        "blue": {
+          "min": 29835,
+          "max": 42751
+        },
+        "purple": {
+          "min": 116100,
+          "max": 176175
+        },
+        "gold": {
+          "min": 5225,
+          "max": 5225
+        }
+      }
+    },
+    {
+      "name": "皇家蓝宝石",
+      "image": "hyperframes/皇家蓝宝石.png",
+      "ports": [
+        {
+          "name": "奥托皮亚",
+          "image": "hyperframes/奥托皮亚.png",
+          "flag_image": "hyperframes/奥托皮亚旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 152685
+          }
+        },
+        {
+          "name": "瑞文斯克",
+          "image": "hyperframes/瑞文斯克.png",
+          "flag_image": "hyperframes/瑞文斯克旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        },
+        {
+          "name": "迈克尔",
+          "image": "hyperframes/迈克尔.png",
+          "flag_image": "hyperframes/迈克尔旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        },
+        {
+          "name": "托尼诺",
+          "image": "hyperframes/托尼诺.png",
+          "flag_image": "hyperframes/托尼诺旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        }
+      ],
+      "tiers": {
+        "grey": {
+          "min": 11475,
+          "max": 16443
+        },
+        "green": {
+          "min": 20655,
+          "max": 29597
+        },
+        "blue": {
+          "min": 29835,
+          "max": 42751
+        },
+        "purple": {
+          "min": 94500,
+          "max": 152685
+        },
+        "gold": {
+          "min": 5225,
+          "max": 5225
+        }
+      }
+    },
+    {
+      "name": "八分仪",
+      "image": "hyperframes/八分仪.png",
+      "ports": [
+        {
+          "name": "奥托皮亚",
+          "image": "hyperframes/奥托皮亚.png",
+          "flag_image": "hyperframes/奥托皮亚旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        },
+        {
+          "name": "瑞文斯克",
+          "image": "hyperframes/瑞文斯克.png",
+          "flag_image": "hyperframes/瑞文斯克旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        },
+        {
+          "name": "迈克尔",
+          "image": "hyperframes/迈克尔.png",
+          "flag_image": "hyperframes/迈克尔旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        },
+        {
+          "name": "托尼诺",
+          "image": "hyperframes/托尼诺.png",
+          "flag_image": "hyperframes/托尼诺旗帜.png",
+          "price": {
+            "min": 16443,
+            "max": 137025
+          }
+        }
+      ],
+      "tiers": {
+        "grey": {
+          "min": 11475,
+          "max": 16443
+        },
+        "green": {
+          "min": 20655,
+          "max": 29597
+        },
+        "blue": {
+          "min": 29835,
+          "max": 42751
+        },
+        "purple": {
+          "min": 94500,
+          "max": 137025
+        },
+        "gold": {
+          "min": 5225,
+          "max": 5225
+        }
+      }
+    }
+  ]
+}

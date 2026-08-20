@@ -1,0 +1,2056 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>遗忘之海 · 交易行行情</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Outfit:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --color-primary: #2c3e50;
+      --color-accent: #c78b4a;
+      --color-surface: #faf8f3;
+      --color-ink: #1a1a1a;
+      --color-muted: #6b6b6b;
+      --color-wash: #f2efe8;
+      --color-card: #ffffff;
+      --color-border: #e8e4dc;
+      --color-up: #2d7a4c;
+      --color-down: #9e2b25;
+      --color-gold: #d4a017;
+      --color-quality-red: #c9372c;
+      --color-quality-red-soft: #fef2f2;
+      --color-quality-gold: #d4a017;
+      --color-quality-gold-soft: #fffbeb;
+      --color-quality-purple: #7e57c2;
+      --color-quality-purple-soft: #f3f0fa;
+      --color-tier-grey: #6b7280;
+      --color-tier-grey-soft: #f3f4f6;
+      --color-tier-green: #2d7a4c;
+      --color-tier-green-soft: #eef7f1;
+      --color-tier-blue: #2563eb;
+      --color-tier-blue-soft: #eff6ff;
+      --font-display: 'Instrument Serif', 'Noto Sans SC', serif;
+      --font-body: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      --font-ui: 'Outfit', 'Noto Sans SC', sans-serif;
+      --space-xs: 0.5rem;
+      --space-sm: 1rem;
+      --space-md: 1.5rem;
+      --space-lg: 2.5rem;
+      --space-xl: 4rem;
+      --space-2xl: 6rem;
+      --radius: 0.75rem;
+      --duration: 300ms;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; font-family: var(--font-body); font-size: 16px; line-height: 1.7; color: var(--color-ink); background: var(--color-surface); -webkit-font-smoothing: antialiased; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-md); }
+    header { padding: var(--space-2xl) 0 var(--space-xl); border-bottom: 1px solid var(--color-border); }
+    .eyebrow { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-accent); margin-bottom: var(--space-sm); }
+    h1 { font-family: var(--font-display); font-size: clamp(2.25rem, 6vw, 3.5rem); font-weight: 400; line-height: 1.15; margin: 0 0 var(--space-sm); }
+    .subtitle { font-size: 1.125rem; color: var(--color-muted); max-width: 620px; margin: 0 0 var(--space-md); }
+    .meta { font-family: var(--font-ui); font-size: 0.875rem; color: var(--color-muted); }
+    .meta span + span::before { content: " · "; }
+    section { padding: var(--space-xl) 0; }
+    .section-title { font-family: var(--font-display); font-size: 1.75rem; font-weight: 400; margin: 0 0 var(--space-sm); }
+    .section-desc { color: var(--color-muted); margin: 0 0 var(--space-lg); }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-md); margin-bottom: var(--space-lg); }
+    .stat-card { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); padding: var(--space-md); }
+    .stat-label { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-muted); margin-bottom: var(--space-xs); }
+    .stat-value { font-family: var(--font-ui); font-size: 1.75rem; font-weight: 600; color: var(--color-ink); }
+    .stat-sub { font-size: 0.875rem; color: var(--color-muted); margin-top: var(--space-xs); }
+
+    .topline { display: flex; flex-wrap: wrap; gap: var(--space-md); font-family: var(--font-ui); font-size: 0.9375rem; color: var(--color-muted); margin-bottom: var(--space-lg); }
+    .topline strong { color: var(--color-ink); font-weight: 600; }
+
+    .controls { display: flex; flex-wrap: wrap; gap: var(--space-sm); align-items: center; margin-bottom: var(--space-lg); }
+    .search { flex: 1 1 240px; font-family: var(--font-body); font-size: 0.9375rem; padding: 12px 16px; border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-card); color: var(--color-ink); outline: none; transition: border-color var(--duration) var(--ease); }
+    .search:focus { border-color: var(--color-primary); }
+    .filter-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .filter-btn { font-family: var(--font-ui); font-size: 0.875rem; font-weight: 500; padding: 10px 16px; border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-card); color: var(--color-muted); cursor: pointer; transition: all var(--duration) var(--ease); }
+    .filter-btn:hover { border-color: var(--color-primary); color: var(--color-ink); }
+    .filter-btn.active { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-card); }
+
+    .group-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 400; margin: var(--space-lg) 0 var(--space-md); display: flex; align-items: baseline; gap: var(--space-xs); }
+
+    /* ===== 商品卡片 ===== */
+    .market-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; }
+    .item-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid var(--color-border);
+      border-left: 6px solid var(--q-color);
+      background:
+        linear-gradient(135deg, var(--q-soft) 0%, var(--color-card) 45%),
+        var(--color-card);
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+      transition: box-shadow var(--duration) var(--ease), transform var(--duration) var(--ease);
+      opacity: 0;
+      transform: translateY(12px);
+      animation: cardEnter .45s var(--ease) forwards;
+    }
+    .item-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(225deg, var(--q-color) 0%, transparent 65%);
+      opacity: .12;
+      pointer-events: none;
+      border-top-right-radius: var(--radius);
+    }
+    .item-card:hover { box-shadow: 0 12px 20px -5px rgb(0 0 0 / 0.1); transform: translateY(-2px); }
+    @keyframes cardEnter { to { opacity: 1; transform: translateY(0); } }
+    .card-body { display: flex; gap: 1rem; padding: 1rem; position: relative; z-index: 1; }
+    .card-media {
+      flex-shrink: 0;
+      width: 64px;
+      height: 64px;
+      border-radius: calc(var(--radius) - 4px);
+      background: #fff;
+      border: 2px solid var(--q-color);
+      box-shadow: 0 0 0 3px var(--q-soft), 0 4px 10px rgb(0 0 0 / 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .card-media img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
+    .card-info { flex: 1; min-width: 0; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; }
+    .card-name {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--color-ink);
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .stock-pill {
+      flex-shrink: 0;
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      color: var(--color-muted);
+      background: var(--color-wash);
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid var(--color-border);
+    }
+    .quality-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      border: 1px solid var(--q-soft);
+      background: var(--q-soft);
+      color: var(--q-color);
+    }
+    .quality-pill::before {
+      content: '';
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 50%;
+      background: var(--q-color);
+    }
+    .card-price {
+      margin-top: 0.5rem;
+      font-family: var(--font-ui);
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--q-color);
+    }
+    .card-price.out { font-size: 1.25rem; color: var(--color-muted); }
+    .card-chart { padding: 0 1rem 1rem; position: relative; z-index: 1; }
+
+    .sparkline-wrap { position: relative; height: 56px; background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, var(--color-wash) 100%); border-radius: calc(var(--radius) - 4px); overflow: visible; border: 1px solid var(--color-border); }
+    .sparkline { width: 100%; height: 100%; display: block; overflow: visible; }
+    .sparkline-labels { display: flex; justify-content: space-between; font-family: var(--font-ui); font-size: 0.65rem; color: var(--color-muted); margin-top: 6px; }
+    .sparkline-tooltip { position: fixed; pointer-events: none; z-index: 1000; background: rgba(28, 28, 30, 0.94); color: #fff; padding: 8px 12px; border-radius: 8px; font-family: var(--font-ui); font-size: 0.8rem; line-height: 1.45; box-shadow: 0 8px 24px rgba(0,0,0,0.15); backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.15s ease; max-width: 200px; }
+    .sparkline-tooltip.visible { opacity: 1; }
+    .sparkline-tooltip .tt-date { color: rgba(255,255,255,0.7); font-size: 0.7rem; margin-bottom: 2px; }
+    .sparkline-tooltip .tt-price { font-weight: 600; font-size: 0.95rem; }
+    .sparkline-tooltip .tt-change { font-size: 0.75rem; margin-top: 2px; }
+    .sparkline-tooltip .tt-change.up { color: #7ee787; }
+    .sparkline-tooltip .tt-change.down { color: #ffa7a7; }
+    .sparkline-tooltip .tt-change.flat { color: rgba(255,255,255,0.6); }
+    .spark-point { transition: r 0.15s ease; }
+    .spark-hit { cursor: crosshair; }
+    .trend-pill { display: inline-flex; align-items: center; gap: 3px; font-family: var(--font-ui); font-size: 0.7rem; font-weight: 600; padding: 2px 7px; border-radius: 999px; margin-left: 6px; vertical-align: 2px; }
+    .trend-pill.up { background: var(--color-tier-green-soft); color: var(--color-tier-green); }
+    .trend-pill.down { background: #fff0f0; color: var(--color-down); }
+    .trend-pill.flat { background: var(--color-wash); color: var(--color-muted); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+    thead th { text-align: left; font-family: var(--font-ui); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-muted); padding: 12px; border-bottom: 2px solid var(--color-border); cursor: pointer; user-select: none; white-space: nowrap; }
+    thead th:hover { color: var(--color-ink); }
+    tbody tr { border-bottom: 1px solid var(--color-border); transition: background var(--duration) var(--ease); }
+    tbody tr:hover { background: var(--color-wash); }
+    tbody td { padding: 14px 12px; vertical-align: middle; }
+    .td-name { font-weight: 500; }
+    .pill { display: inline-block; font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--color-wash); color: var(--color-muted); }
+    .td-price { font-family: var(--font-ui); text-align: right; font-weight: 600; }
+    .td-price.high { color: var(--color-gold); }
+    .td-price.mid { color: var(--color-primary); }
+    .td-price.low { color: var(--color-ink); }
+    .td-price.out { color: var(--color-muted); }
+    .sort-icon { font-weight: 400; opacity: 0.5; }
+    .sort-asc .sort-icon::after { content: " ↑"; }
+    .sort-desc .sort-icon::after { content: " ↓"; }
+
+    .item-thumb { width: 28px; height: 28px; object-fit: contain; border-radius: 4px; vertical-align: middle; margin-right: 8px; background: var(--color-wash); }
+    .item-thumb-lg { width: 64px; height: 64px; object-fit: contain; border-radius: calc(var(--radius) - 4px); vertical-align: middle; padding: 4px; background: var(--color-wash); }
+    .img-placeholder { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 4px; background: var(--color-wash); color: var(--color-muted); font-size: 0.75rem; font-weight: 600; margin-right: 8px; vertical-align: middle; }
+    .img-placeholder-lg { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: calc(var(--radius) - 4px); background: var(--color-wash); color: var(--color-muted); font-size: 0.875rem; font-weight: 600; vertical-align: middle; }
+    .coin-icon { width: 1em; height: 1em; vertical-align: -0.15em; margin-right: 0.25em; display: inline-block; }
+    .quality-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+    .quality-red { background: var(--color-quality-red); box-shadow: 0 0 0 2px rgb(201 55 44 / 0.25); }
+    .quality-gold { background: var(--color-quality-gold); box-shadow: 0 0 0 2px rgb(212 160 23 / 0.25); }
+    .quality-purple { background: var(--color-quality-purple); box-shadow: 0 0 0 2px rgb(126 87 194 / 0.25); }
+    .quality-badge { display: inline-flex; align-items: center; font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; color: var(--color-muted); }
+    .price-red { color: var(--color-quality-red) !important; }
+    .price-gold { color: var(--color-quality-gold) !important; }
+    .price-purple { color: var(--color-quality-purple) !important; }
+    .quality-filter .quality-dot { width: 8px; height: 8px; }
+
+    .empty-tip { color: var(--color-muted); font-size: 0.875rem; }
+
+    /* ===== 视图切换 Tab ===== */
+    .view-tabs { display: flex; gap: var(--space-xs); margin-bottom: var(--space-lg); border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-sm); }
+    .view-tab { font-family: var(--font-ui); font-size: 0.9375rem; font-weight: 600; padding: 10px 20px; border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-card); color: var(--color-muted); cursor: pointer; transition: all var(--duration) var(--ease); }
+    .view-tab:hover { border-color: var(--color-primary); color: var(--color-ink); }
+    .view-tab.active { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-card); }
+
+    /* ===== 宝藏交易卡片 ===== */
+    .treasure-block { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); padding: var(--space-md); margin-bottom: var(--space-md); box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04); }
+    .treasure-header { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm); }
+    .treasure-thumb { width: 56px; height: 56px; object-fit: contain; border-radius: calc(var(--radius) - 4px); background: var(--color-wash); padding: 4px; }
+    .treasure-title { margin: 0; font-family: var(--font-display); font-size: 1.25rem; font-weight: 400; }
+    .treasure-tier-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-sm); margin-bottom: var(--space-sm); }
+    .tier-card { position: relative; overflow: hidden; border-radius: calc(var(--radius) - 4px); border: 1px solid var(--color-border); border-top: 5px solid var(--tier-color); background: linear-gradient(135deg, var(--tier-soft) 0%, var(--color-card) 55%); padding: 12px 8px; text-align: center; transition: transform var(--duration) var(--ease), box-shadow var(--duration) var(--ease); }
+    .tier-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px -4px rgb(0 0 0 / 0.08); }
+    .tier-card img { width: 48px; height: 48px; object-fit: contain; margin-bottom: 6px; }
+    .tier-card-label { font-family: var(--font-ui); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; color: var(--color-muted); margin-bottom: 2px; }
+    .tier-card-price { font-family: var(--font-ui); font-size: 1.125rem; font-weight: 700; color: var(--color-ink); }
+    .tier-card-range { font-family: var(--font-ui); font-size: 0.75rem; color: var(--color-muted); margin-top: 2px; }
+    .tier-grey  { --tier-color: var(--color-tier-grey); --tier-soft: var(--color-tier-grey-soft); }
+    .tier-green { --tier-color: var(--color-tier-green); --tier-soft: var(--color-tier-green-soft); }
+    .tier-blue  { --tier-color: var(--color-tier-blue); --tier-soft: var(--color-tier-blue-soft); }
+    .tier-purple { --tier-color: var(--color-quality-purple); --tier-soft: var(--color-quality-purple-soft); }
+    .tier-gold  { --tier-color: var(--color-quality-gold); --tier-soft: var(--color-quality-gold-soft); }
+
+    .treasure-ports { display: flex; flex-direction: column; gap: 8px; }
+    .treasure-port-line { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-sm); padding: 10px 12px; border-radius: calc(var(--radius) - 4px); background: var(--color-wash); border: 1px solid var(--color-border); cursor: pointer; transition: background var(--duration) var(--ease), border-color var(--duration) var(--ease); }
+    .treasure-port-line:hover { background: var(--color-card); border-color: var(--color-primary); }
+    .port-thumb { width: 32px; height: 32px; object-fit: contain; border-radius: 50%; background: var(--color-card); border: 1px solid var(--color-border); }
+    .port-name { font-weight: 600; font-size: 1rem; }
+    .port-range { margin-left: auto; font-family: var(--font-ui); font-size: 0.9375rem; color: var(--color-muted); text-align: right; }
+    .port-range strong { color: var(--color-ink); font-weight: 600; }
+    .port-spark-wrap { position: relative; width: 100%; height: 40px; margin-top: 2px; background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0)); border-radius: calc(var(--radius) - 6px); }
+    .port-spark-wrap .sparkline { width: 100%; height: 100%; display: block; overflow: visible; }
+    .port-spark-wrap .sparkline-labels { display: none; }
+
+    .treasure-layout { display: grid; grid-template-columns: 1fr 300px; gap: var(--space-md); align-items: start; }
+    .flag-panel { position: sticky; top: var(--space-md); }
+    .flag-card { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); padding: var(--space-md); box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04); text-align: center; }
+    .flag-card img { width: 100%; height: auto; border-radius: calc(var(--radius) - 4px); display: block; }
+    .flag-placeholder { color: var(--color-muted); font-size: 0.9375rem; padding: var(--space-lg) 0; line-height: 1.6; }
+    .flag-name { margin-top: var(--space-sm); font-family: var(--font-display); font-size: 1.25rem; color: var(--color-ink); }
+
+
+    /* 社交跳转确认弹窗 */
+    .brand-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(26, 26, 26, 0.45);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      padding: var(--space-md);
+    }
+    .brand-modal-overlay.is-open { display: flex; }
+    .brand-modal {
+      width: min(380px, 100%);
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.35);
+      padding: var(--space-lg);
+      text-align: center;
+      animation: brandModalIn 0.25s var(--ease);
+    }
+    @keyframes brandModalIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .brand-modal-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto var(--space-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+      color: #fff;
+      font-family: var(--font-ui);
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+    .brand-modal-icon img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+    }
+    .brand-modal-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      color: var(--color-ink);
+      margin: 0 0 6px;
+    }
+    .brand-modal-link {
+      display: block;
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      color: var(--color-muted);
+      word-break: break-all;
+      margin: 0 0 var(--space-md);
+    }
+    .brand-modal-actions {
+      display: flex;
+      gap: var(--space-xs);
+      justify-content: center;
+    }
+    .brand-modal-btn {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      color: var(--color-ink);
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform var(--duration) var(--ease), box-shadow var(--duration) var(--ease), background var(--duration) var(--ease);
+    }
+    .brand-modal-btn:hover { transform: translateY(-1px); }
+    .brand-modal-btn--go {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+    .brand-modal-btn--go:hover { box-shadow: 0 6px 16px -6px var(--color-primary); }
+
+    @media (max-width: 768px) {
+      .treasure-tier-row { grid-template-columns: repeat(3, 1fr); }
+      .treasure-layout { grid-template-columns: 1fr; }
+      .flag-panel { position: static; margin-top: var(--space-md); }
+    }
+    @media (max-width: 480px) {
+      .treasure-tier-row { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    footer { padding: var(--space-xl) 0; border-top: 1px solid var(--color-border); margin-top: var(--space-xl); text-align: center; color: var(--color-muted); font-size: 0.875rem; }
+
+    /* ===== 品牌页脚 ===== */
+    .site-footer {
+      background: var(--color-surface);
+      border-top: none;
+      margin-top: var(--space-xl);
+      padding: var(--space-xl) var(--space-md) var(--space-lg);
+    }
+    /* 技术栈区（上层） */
+    .footer-tech-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      margin-bottom: var(--space-md);
+    }
+    .footer-tech {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: var(--color-wash);
+      color: var(--color-muted);
+      font-family: var(--font-ui);
+      font-size: 0.8125rem;
+      letter-spacing: 0.01em;
+      transition: background var(--duration) var(--ease), color var(--duration) var(--ease), box-shadow var(--duration) var(--ease), transform var(--duration) var(--ease);
+    }
+    .footer-tech img {
+      width: 14px;
+      height: 14px;
+      object-fit: contain;
+      flex: none;
+    }
+    .footer-tech:hover {
+      background: var(--color-card);
+      color: var(--color-ink);
+      box-shadow: 0 4px 14px -6px rgba(44, 62, 80, 0.28);
+      transform: translateY(-1px);
+    }
+    .footer-tech:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+    /* 分隔细线 */
+    .footer-divider {
+      border: none;
+      border-top: 1px solid var(--color-border);
+      margin: 0 auto var(--space-md);
+      max-width: 640px;
+    }
+    /* 社交图标区（下层） */
+    .footer-brand-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .footer-brand {
+      --brand-color: var(--color-primary);
+      --brand-glow: rgba(44, 62, 80, 0.35);
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 54px;
+      height: 54px;
+      border-radius: var(--radius);
+      background: var(--brand-color);
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.08);
+      transition: box-shadow var(--duration) var(--ease), transform var(--duration) var(--ease), background var(--duration) var(--ease);
+      text-decoration: none;
+    }
+    .footer-brand::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: rgba(0, 0, 0, 0);
+      transition: background var(--duration) var(--ease);
+      pointer-events: none;
+    }
+    .footer-brand img {
+      position: relative;
+      z-index: 1;
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      opacity: 0.95;
+      transition: transform var(--duration) var(--ease), opacity var(--duration) var(--ease);
+    }
+    /* 彩色/深色 SVG：统一反白为白色 logo，叠在品牌纯色底上 */
+    .footer-brand--invert img {
+      filter: brightness(0) invert(1);
+    }
+    .footer-brand-fallback {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      width: 26px;
+      height: 26px;
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .footer-brand:hover {
+      box-shadow: 0 8px 20px -6px var(--brand-glow), 0 0 14px 0 var(--brand-glow);
+      transform: translateY(-2px);
+    }
+    .footer-brand:hover::before { background: rgba(0, 0, 0, 0.06); }
+    .footer-brand:hover img { transform: scale(1.06); opacity: 1; }
+    .footer-brand:focus-visible {
+      outline: 2px solid var(--brand-color);
+      outline-offset: 3px;
+      box-shadow: 0 0 0 6px var(--brand-glow);
+    }
+    .footer-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin-top: var(--space-md);
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--color-border);
+      color: var(--color-muted);
+      font-size: 0.875rem;
+    }
+    .footer-brand-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--color-ink);
+      font-family: var(--font-ui);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .footer-mini {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .footer-note { margin: 2px 0 0; }
+    .footer-copy { margin: 0; font-family: var(--font-ui); font-size: 0.75rem; letter-spacing: 0.04em; }
+    @media (max-width: 640px) {
+      .footer-tech-row { gap: var(--space-2xs); }
+      .footer-tech { padding: 4px 10px; font-size: 0.75rem; }
+      .footer-tech img { width: 12px; height: 12px; }
+      .footer-brand-row { gap: var(--space-xs); }
+      .footer-brand { width: 48px; height: 48px; }
+      .footer-brand img { width: 24px; height: 24px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .footer-brand, .footer-brand img, .footer-tech { transition: none; }
+      .footer-brand:hover, .footer-tech:hover { transform: none; }
+      .footer-brand:hover img, .footer-tech:hover { transform: none; }
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .market-grid { grid-template-columns: 1fr; }
+      .stat-value { font-size: 1.25rem; }
+    }
+
+    /* ===== 今日焦点 Spotlight ===== */
+    .spotlight-section { margin: var(--space-xl) 0; }
+    .spotlight-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-sm); margin-bottom: var(--space-md); }
+    .spotlight-header .section-title { margin: 0; }
+    .spotlight-modes { display: flex; gap: 8px; background: var(--color-wash); padding: 6px; border-radius: 999px; }
+    .spotlight-mode-btn { font-family: var(--font-ui); font-size: 0.8125rem; font-weight: 600; padding: 8px 16px; border: none; border-radius: 999px; background: transparent; color: var(--color-muted); cursor: pointer; transition: all var(--duration) var(--ease); }
+    .spotlight-mode-btn:hover { color: var(--color-ink); }
+    .spotlight-mode-btn.active { background: var(--color-card); color: var(--color-ink); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+    .spotlight-stage { position: relative; min-height: 360px; }
+    .spotlight-panel { display: none; opacity: 0; transform: translateY(20px); animation: spotlightPanelIn 0.5s var(--ease) forwards; }
+    .spotlight-panel.active { display: block; opacity: 1; transform: translateY(0); }
+    @keyframes spotlightPanelIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ---- Mode A: 3D Cards ---- */
+    .spotlight-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); perspective: 1400px; }
+    .spotlight-card { position: relative; border-radius: calc(var(--radius) + 8px); padding: 2px; background: linear-gradient(135deg, var(--q-color, var(--color-border)) 0%, transparent 60%); transform-style: preserve-3d; transition: transform 0.1s linear; cursor: pointer; }
+    .spotlight-card::before { content: ''; position: absolute; inset: -20px; border-radius: inherit; background: radial-gradient(circle at 50% 0%, var(--q-color, var(--color-border)) 0%, transparent 70%); opacity: 0.35; filter: blur(24px); pointer-events: none; }
+    .spotlight-card-inner { position: relative; background: var(--color-card); border-radius: calc(var(--radius) + 6px); padding: var(--space-md); overflow: hidden; transform-style: preserve-3d; height: 100%; border: 1px solid var(--color-border); }
+    .spotlight-card-glow { position: absolute; inset: -50%; background: radial-gradient(circle at var(--mx,50%) var(--my,50%), var(--q-color, var(--color-border)) 0%, transparent 50%); opacity: 0.18; mix-blend-mode: overlay; pointer-events: none; transition: opacity 0.3s; }
+    .spotlight-card:hover .spotlight-card-glow { opacity: 0.32; }
+    .spotlight-card-media { position: relative; height: 140px; display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-sm); transform: translateZ(20px); }
+    .spotlight-card-media img { max-height: 120px; max-width: 100%; object-fit: contain; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.12)); transition: transform 0.4s var(--ease); }
+    .spotlight-card:hover .spotlight-card-media img { transform: scale(1.08) translateY(-6px); }
+    .spotlight-card-reason { display: inline-flex; font-family: var(--font-ui); font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; background: var(--q-soft); color: var(--q-color); margin-bottom: 8px; }
+    .spotlight-card-name { margin: 0 0 8px; font-family: var(--font-display); font-size: 1.35rem; font-weight: 400; line-height: 1.2; color: var(--color-ink); }
+    .spotlight-card-price { font-family: var(--font-ui); font-size: 2.25rem; font-weight: 800; line-height: 1; color: var(--q-color); margin-bottom: 8px; }
+    .spotlight-card-change { font-family: var(--font-ui); font-size: 0.875rem; font-weight: 600; margin-bottom: 6px; }
+    .spotlight-card-change.up { color: var(--color-up); }
+    .spotlight-card-change.down { color: var(--color-down); }
+    .spotlight-card-stock { font-size: 0.8125rem; color: var(--color-muted); }
+
+    /* ---- Mode B: Hero Banner ---- */
+    .spotlight-hero { position: relative; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: var(--space-lg); align-items: center; background: linear-gradient(135deg, var(--q-soft, var(--color-wash)) 0%, var(--color-card) 60%); border: 1px solid var(--color-border); border-radius: calc(var(--radius) + 12px); padding: var(--space-xl); overflow: hidden; min-height: 360px; }
+    .spotlight-hero::before { content: ''; position: absolute; top: -30%; right: -20%; width: 60%; height: 160%; background: radial-gradient(circle, var(--q-color, var(--color-border)) 0%, transparent 70%); opacity: 0.12; filter: blur(60px); pointer-events: none; }
+    .spotlight-hero-content { position: relative; z-index: 1; }
+    .spotlight-hero-reason { display: inline-flex; font-family: var(--font-ui); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 12px; border-radius: 999px; background: var(--q-soft); color: var(--q-color); margin-bottom: var(--space-sm); }
+    .spotlight-hero-name { margin: 0 0 var(--space-sm); font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 400; line-height: 1.1; color: var(--color-ink); letter-spacing: -0.02em; }
+    .spotlight-hero-price { font-family: var(--font-ui); font-size: clamp(3rem, 8vw, 5rem); font-weight: 800; line-height: 1; color: var(--q-color); margin-bottom: var(--space-sm); letter-spacing: -0.03em; }
+    .spotlight-hero-meta { display: flex; gap: var(--space-md); font-family: var(--font-ui); font-size: 0.9375rem; color: var(--color-muted); }
+    .spotlight-hero-meta strong { color: var(--color-ink); font-weight: 600; }
+    .spotlight-hero-media { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; height: 100%; transform-style: preserve-3d; }
+    .spotlight-hero-media img { max-height: 260px; max-width: 100%; object-fit: contain; filter: drop-shadow(0 30px 50px rgba(0,0,0,0.16)); animation: heroFloat 5s ease-in-out infinite; }
+    @keyframes heroFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+    .spotlight-hero-dots { display: flex; justify-content: center; gap: 10px; margin-top: var(--space-md); }
+    .spotlight-hero-dot { width: 10px; height: 10px; border-radius: 50%; border: none; background: var(--color-border); cursor: pointer; transition: all var(--duration) var(--ease); }
+    .spotlight-hero-dot.active { background: var(--q-color, var(--color-ink)); transform: scale(1.3); }
+
+    /* ---- Mode C: 3D Carousel (pseudo-3D stacked) ---- */
+    .spotlight-carousel { position: relative; height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .spotlight-carousel-stage { position: relative; width: 280px; height: 340px; perspective: 1000px; }
+    .spotlight-carousel-card { position: absolute; inset: 0; background: var(--color-card); border: 1px solid var(--color-border); border-radius: calc(var(--radius) + 8px); padding: var(--space-md); display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.08); transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .spotlight-carousel-card-media { height: 130px; display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-sm); }
+    .spotlight-carousel-card-media img { max-height: 120px; max-width: 100%; object-fit: contain; filter: drop-shadow(0 16px 28px rgba(0,0,0,0.1)); }
+    .spotlight-carousel-card-reason { font-family: var(--font-ui); font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: var(--q-soft); color: var(--q-color); margin-bottom: 6px; }
+    .spotlight-carousel-card-name { font-family: var(--font-display); font-size: 1.125rem; font-weight: 400; line-height: 1.25; margin: 0 0 6px; }
+    .spotlight-carousel-card-price { font-family: var(--font-ui); font-size: 1.75rem; font-weight: 800; color: var(--q-color); margin-bottom: 4px; }
+    .spotlight-carousel-card-stock { font-size: 0.75rem; color: var(--color-muted); }
+    .spotlight-carousel-dots { display: flex; gap: 10px; margin-top: var(--space-md); }
+    .spotlight-carousel-dot { width: 10px; height: 10px; border-radius: 50%; border: none; background: var(--color-border); cursor: pointer; transition: all var(--duration) var(--ease); }
+    .spotlight-carousel-dot.active { background: var(--color-ink); transform: scale(1.3); }
+    .spotlight-carousel-drag { position: absolute; inset: 0; cursor: grab; z-index: 10; }
+    .spotlight-carousel-drag:active { cursor: grabbing; }
+
+    @media (max-width: 992px) {
+      .spotlight-cards { grid-template-columns: 1fr; }
+      .spotlight-hero { grid-template-columns: 1fr; text-align: center; }
+      .spotlight-hero-media { order: -1; }
+      .spotlight-hero-media img { max-height: 180px; }
+    }
+
+    /* ===== GSAP / Lenis 动画增强 ===== */
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+    .lenis.lenis-stopped { overflow: hidden; }
+    .lenis.lenis-smooth iframe { pointer-events: none; }
+
+    body.gsap-active .item-card { opacity: 1; transform: none; animation: none; }
+    body.gsap-active .stat-card,
+    body.gsap-active .section-title,
+    body.gsap-active .section-desc,
+    body.gsap-active .controls,
+    body.gsap-active .topline,
+    body.gsap-active .view-tabs,
+    body.gsap-active .treasure-block,
+    body.gsap-active #marketTableBody tr { will-change: transform, opacity; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html.lenis, html.lenis body { scroll-behavior: auto !important; }
+      body.gsap-active .item-card,
+      body.gsap-active .stat-card,
+      body.gsap-active .section-title,
+      body.gsap-active .section-desc,
+      body.gsap-active .controls,
+      body.gsap-active .topline,
+      body.gsap-active .view-tabs,
+      body.gsap-active .treasure-block,
+      body.gsap-active #marketTableBody tr { will-change: auto; opacity: 1 !important; transform: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="eyebrow">Market Snapshot</div>
+      <h1>遗忘之海 · 交易行行情</h1>
+      <p class="subtitle">追踪外观、断章与重点材料的价格与库存变化，7 日走势助你把握买卖时机。</p>
+      <div class="meta">
+        <span id="currentDate"></span>
+        <span id="snapshotDate">数据加载中…</span>
+        <span>数据来源：游戏内交易行</span>
+      </div>
+    </header>
+
+    <section>
+      <div class="view-tabs">
+        <button class="view-tab active" data-view="market">交易行行情</button>
+        <button class="view-tab" data-view="treasure">宝藏交易</button>
+      </div>
+
+      <div id="marketPanel">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">上架商品总数</div>
+          <div class="stat-value" id="stat-total">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">当前缺货</div>
+          <div class="stat-value" id="stat-out">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">品质分布</div>
+          <div class="stat-value" style="font-size:1.125rem; display:flex; gap:10px; flex-wrap:wrap; margin-top:4px;">
+            <span class="quality-badge"><span class="quality-dot quality-red"></span><span id="stat-red">0</span></span>
+            <span class="quality-badge"><span class="quality-dot quality-gold"></span><span id="stat-gold">0</span></span>
+            <span class="quality-badge"><span class="quality-dot quality-purple"></span><span id="stat-purple">0</span></span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">最高单价</div>
+          <div class="stat-value" id="stat-max">—</div>
+          <div class="stat-sub" id="stat-max-name"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">最低单价</div>
+          <div class="stat-value" id="stat-min">—</div>
+          <div class="stat-sub" id="stat-min-name"></div>
+        </div>
+      </div>
+
+      <div class="topline">
+        <span>共 <strong id="total-items">0</strong> 种商品</span>
+        <span>总库存 <strong id="total-stock">0</strong> 件</span>
+        <span>缺货 <strong id="out-of-stock">0</strong> 种</span>
+      </div>
+
+      <div class="controls">
+        <input type="text" class="search" id="searchMarket" placeholder="搜索物品名称…" />
+        <div class="filter-group">
+          <button class="filter-btn active" data-filter="all">全部</button>
+          <button class="filter-btn" data-filter="外观">外观</button>
+          <button class="filter-btn" data-filter="断章">断章</button>
+          <button class="filter-btn" data-filter="材料">材料</button>
+        </div>
+        <div class="filter-group quality-filter">
+          <button class="filter-btn active" data-quality="all">全部品质</button>
+          <button class="filter-btn" data-quality="red"><span class="quality-dot quality-red"></span>红色</button>
+          <button class="filter-btn" data-quality="gold"><span class="quality-dot quality-gold"></span>金色</button>
+          <button class="filter-btn" data-quality="purple"><span class="quality-dot quality-purple"></span>紫色</button>
+        </div>
+      </div>
+
+      <!-- 今日焦点 Spotlight -->
+      <section class="spotlight-section" id="spotlightSection" style="display:none;">
+        <div class="spotlight-header">
+          <h2 class="section-title">今日焦点</h2>
+          <div class="spotlight-modes">
+            <button class="spotlight-mode-btn active" data-mode="cards">焦点卡</button>
+            <button class="spotlight-mode-btn" data-mode="hero">横幅</button>
+            <button class="spotlight-mode-btn" data-mode="carousel">展台</button>
+          </div>
+        </div>
+        <div class="spotlight-stage" id="spotlightStage">
+          <!-- Mode A: 3D Cards -->
+          <div class="spotlight-panel active" data-mode="cards" id="spotlightCardsPanel">
+            <div class="spotlight-cards" id="spotlightCards"></div>
+          </div>
+          <!-- Mode B: Hero Banner -->
+          <div class="spotlight-panel" data-mode="hero" id="spotlightHeroPanel">
+            <div class="spotlight-hero" id="spotlightHero">
+              <div class="spotlight-hero-content" id="spotlightHeroContent"></div>
+              <div class="spotlight-hero-media" id="spotlightHeroMedia"></div>
+            </div>
+            <div class="spotlight-hero-dots" id="spotlightHeroDots"></div>
+          </div>
+          <!-- Mode C: 3D Carousel -->
+          <div class="spotlight-panel" data-mode="carousel" id="spotlightCarouselPanel">
+            <div class="spotlight-carousel">
+              <div class="spotlight-carousel-stage" id="spotlightCarouselStage"></div>
+              <div class="spotlight-carousel-dots" id="spotlightCarouselDots"></div>
+              <div class="spotlight-carousel-drag" id="spotlightCarouselDrag"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <h2 class="section-title">商品价格走势</h2>
+      <p class="section-desc">每个卡片展示该商品近 7 日的价格折线。仅展示外观、断章与重点材料。</p>
+      <div id="marketGrid"></div>
+
+      <h2 class="section-title">完整行情表</h2>
+      <p class="section-desc">点击表头可按名称、分类、价格或库存排序。</p>
+      <table>
+        <thead><tr>
+          <th data-key="name">物品 <span class="sort-icon">↕</span></th>
+          <th data-key="category">分类 <span class="sort-icon">↕</span></th>
+          <th data-key="item_type">类型 <span class="sort-icon">↕</span></th>
+          <th data-key="quality">品质 <span class="sort-icon">↕</span></th>
+          <th data-key="price" style="text-align:right">价格 <span class="sort-icon">↕</span></th>
+          <th data-key="stock" style="text-align:right">库存 <span class="sort-icon">↕</span></th>
+        </tr></thead>
+        <tbody id="marketTableBody"></tbody>
+      </table>
+      </div>
+
+      <div id="treasurePanel" style="display:none">
+        <h2 class="section-title">宝藏交易</h2>
+        <p class="section-desc">每个宝藏显示 5 个品质档位的参考价格，以及其产出港口与当前价格区间。点击港口可查看旗帜。</p>
+
+        <div class="controls">
+          <input type="text" class="search" id="searchTreasure" placeholder="搜索宝藏或港口…" />
+        </div>
+
+        <div class="treasure-layout">
+          <div class="treasure-main">
+            <div id="treasureBlocks"></div>
+          </div>
+          <aside class="flag-panel">
+            <div class="flag-card">
+              <div class="flag-placeholder">点击左侧港口<br>查看旗帜</div>
+              <img id="flagImage" src="" alt="" style="display:none">
+              <div id="flagName" class="flag-name"></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <!-- 上层：技术栈（标签式） -->
+      <div class="footer-tech-row" aria-label="技术栈">
+        <span class="footer-tech"><img src="logo/deepseek-color.svg" alt="" loading="lazy">DeepSeek</span>
+        <span class="footer-tech"><img src="logo/cursor.svg" alt="" loading="lazy">Cursor</span>
+        <span class="footer-tech"><img src="logo/gpt.svg" alt="" loading="lazy">GPT</span>
+        <span class="footer-tech"><img src="logo/kimi-color.svg" alt="" loading="lazy">Kimi</span>
+        <span class="footer-tech"><img src="logo/trae-color.svg" alt="" loading="lazy">TRAE</span>
+        <span class="footer-tech"><img src="logo/obsidian.svg" alt="" loading="lazy">Obsidian</span>
+        <span class="footer-tech"><img src="logo/剪映.svg" alt="" loading="lazy">剪映</span>
+      </div>
+      <hr class="footer-divider">
+      <!-- 下层：社交账号（图标按钮） -->
+      <div class="footer-brand-row" aria-label="社交账号">
+        <a class="footer-brand footer-brand--invert" href="https://weixin.qq.com" data-link="https://weixin.qq.com" aria-label="微信" style="--brand-color:#07c160;--brand-glow:rgba(7,193,96,0.35)">
+          <img src="https://p1-game.tzgamepkg.com/udata/pkg/fe/nuxt/lom/gw/202605/index/channel-wx.png" alt="微信" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'">
+          <span class="footer-brand-fallback">微</span>
+        </a>
+        <a class="footer-brand" href="https://weibo.com/u/8237399504" data-link="https://weibo.com/u/8237399504" aria-label="微博" style="--brand-color:#e6162d;--brand-glow:rgba(230,22,45,0.35)">
+          <img src="logo/微博.svg" alt="微博" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'">
+          <span class="footer-brand-fallback">博</span>
+        </a>
+        <a class="footer-brand" href="https://qm.qq.com/q/ovPJU4x8M8" data-link="https://qm.qq.com/q/ovPJU4x8M8" aria-label="QQ" style="--brand-color:#12b7f5;--brand-glow:rgba(18,183,245,0.35)">
+          <img src="logo/qq.svg" alt="QQ" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'">
+          <span class="footer-brand-fallback">Q</span>
+        </a>
+        <a class="footer-brand footer-brand--invert" href="https://github.com/usersfor/GameNotes" data-link="https://github.com/usersfor/GameNotes" aria-label="GitHub" style="--brand-color:#24292f;--brand-glow:rgba(36,41,47,0.35)">
+          <img src="logo/github.svg" alt="GitHub" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'">
+          <span class="footer-brand-fallback">G</span>
+        </a>
+        <a class="footer-brand footer-brand--invert" href="https://xhslink.cn/m/Au4OwPR9p0M" data-link="https://xhslink.cn/m/Au4OwPR9p0M" aria-label="小红书" style="--brand-color:#ff2842;--brand-glow:rgba(255,40,66,0.35)">
+          <img src="https://p1-game.tzgamepkg.com/udata/pkg/fe/nuxt/lom/gw/202605/index/channel-xhs.png" alt="小红书" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'">
+          <span class="footer-brand-fallback">红</span>
+        </a>
+                <a class="footer-brand footer-brand--invert" href="https://v.douyin.com/vUfs229nz_o/" data-link="https://v.douyin.com/vUfs229nz_o/" aria-label="抖音" style="--brand-color:#000000;--brand-glow:rgba(0,0,0,0.35)">
+          <img src="https://p1-game.tzgamepkg.com/udata/pkg/fe/nuxt/lom/gw/202605/index/channel-dy.png" alt="抖音" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'">
+          <span class="footer-brand-fallback">抖</span>
+        </a>
+<a class="footer-brand footer-brand--invert" href="https://space.bilibili.com/453267828?spm_id_from=333.337.0.0" data-link="https://space.bilibili.com/453267828?spm_id_from=333.337.0.0" aria-label="哔哩哔哩" style="--brand-color:#FB7299;--brand-glow:rgba(251,114,153,0.35)">
+          <img src="https://p1-game.tzgamepkg.com/udata/pkg/fe/nuxt/lom/gw/202605/index/channel-bili.png" alt="哔哩哔哩" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'">
+          <span class="footer-brand-fallback">B</span>
+        </a>
+        <a class="footer-brand footer-brand--invert" href="https://www.taptap.cn/user/40645253?share_id=9f9c89c86339&utm_medium=share&utm_source=copylink" data-link="https://www.taptap.cn/user/40645253?share_id=9f9c89c86339&utm_medium=share&utm_source=copylink" aria-label="TapTap" style="--brand-color:#04FFFF;--brand-glow:rgba(4,255,255,0.35)">
+          <img src="https://p1-game.tzgamepkg.com/udata/pkg/fe/nuxt/lom/gw/202605/index/channel-tap.png" alt="TapTap" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'">
+          <span class="footer-brand-fallback">T</span>
+        </a>
+        <a class="footer-brand footer-brand--invert" href="https://v.kuaishou.com/nR5jFG0I" data-link="https://v.kuaishou.com/nR5jFG0I" aria-label="快手" style="--brand-color:#ff4906;--brand-glow:rgba(255,73,6,0.35)">
+          <img src="https://p1-game.tzgamepkg.com/udata/pkg/fe/nuxt/lom/gw/202605/index/channel-ks.png" alt="快手" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'">
+          <span class="footer-brand-fallback">快</span>
+        </a>
+        <a class="footer-brand footer-brand--invert" href="https://work.weixin.qq.com" data-link="https://work.weixin.qq.com" aria-label="企业微信" style="--brand-color:#07c160;--brand-glow:rgba(7,193,96,0.35)">
+          <img src="https://p1-game.tzgamepkg.com/udata/pkg/fe/nuxt/lom/gw/202605/index/channel-qw.png" alt="企业微信" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'">
+          <span class="footer-brand-fallback">企</span>
+        </a>
+      </div>
+      <div class="footer-meta">
+        <span class="footer-brand-mark">
+          <span class="footer-mini" aria-hidden="true">海</span>
+          <span>遗忘之海 · 交易行行情</span>
+        </span>
+        <p class="footer-note">数据仅供参考，实际价格以游戏内交易行为准</p>
+        <p class="footer-copy">© 2026 遗忘之海 · Market Snapshot</p>
+      </div>
+    </footer>
+  <!-- 社交跳转确认弹窗 -->
+  <div class="brand-modal-overlay" id="brandModalOverlay" role="dialog" aria-modal="true" aria-labelledby="brandModalTitle">
+    <div class="brand-modal">
+      <div class="brand-modal-icon" id="brandModalIcon"></div>
+      <h3 class="brand-modal-title" id="brandModalTitle"></h3>
+      <span class="brand-modal-link" id="brandModalLink"></span>
+      <div class="brand-modal-actions">
+        <button type="button" class="brand-modal-btn" id="brandModalCancel">取消</button>
+        <button type="button" class="brand-modal-btn brand-modal-btn--go" id="brandModalGo">确认跳转</button>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <script>
+    // ==================== 状态 ====================
+    let marketData = [];
+    let marketHistory = {};
+    let marketDays = ["D-6", "D-5", "D-4", "D-3", "D-2", "D-1", "今日"];
+    let activeMarketFilter = "all";
+    let activeQualityFilter = "all";
+    let marketSortKey = "price";
+    let marketSortDesc = true;
+    let treasureData = [];
+    let activeView = "market";
+
+    const materialWhitelist = new Set(["调律纺锤", "一袋悲叹珍珠", "编织水母·重痕", "巡游涂料", "蔷薇石", "飘落轻羽"]);
+
+    // ==================== 数据加载 ====================
+    async function loadData() {
+      const [pricesRes, historyRes, treasureRes, treasureHistoryRes] = await Promise.all([
+        fetch("prices.json"),
+        fetch("history.json"),
+        fetch("treasures.json"),
+        fetch("treasure_history.json")
+      ]);
+      const pricesJson = await pricesRes.json();
+      const historyJson = await historyRes.json();
+      const treasureJson = await treasureRes.json();
+      const treasureHistoryJson = await treasureHistoryRes.json();
+
+      marketData = pricesJson.items || [];
+      marketHistory = historyJson.history || {};
+      treasureData = treasureJson.treasures || [];
+
+      const meta = pricesJson.meta || {};
+      document.getElementById("snapshotDate").textContent = `快照：${meta.snapshot_date || "—"}`;
+      document.getElementById("currentDate").textContent = new Date().toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric" });
+
+      // 从历史数据推导日期标签（优先使用交易行历史）
+      const firstMarketItem = Object.values(marketHistory)[0];
+      if (firstMarketItem && firstMarketItem.length > 0) {
+        marketDays = firstMarketItem.map(h => {
+          const [m, d] = h.date.split("-").slice(1);
+          return `${m}/${d}`;
+        });
+      }
+
+      // 合并宝藏历史数据，方便复用同一套折线图函数
+      const treasureHistory = treasureHistoryJson.history || {};
+      Object.assign(marketHistory, treasureHistory);
+
+      updateStats(meta);
+    }
+
+    function updateStats(meta) {
+      const total = marketData.length;
+      const outOfStock = marketData.filter(d => d.price === null).length;
+      const totalStock = marketData.reduce((a, b) => a + b.stock, 0);
+      const available = marketData.filter(d => d.price !== null);
+      const maxItem = available.length ? available.reduce((a, b) => a.price > b.price ? a : b) : null;
+      const minItem = available.length ? available.reduce((a, b) => a.price < b.price ? a : b) : null;
+
+      document.getElementById("stat-total").textContent = total;
+      document.getElementById("stat-out").textContent = outOfStock;
+      document.getElementById("stat-max").innerHTML = maxItem ? coinIcon() + maxItem.price.toLocaleString() : "—";
+      document.getElementById("stat-max-name").textContent = maxItem ? maxItem.name : "";
+      document.getElementById("stat-min").innerHTML = minItem ? coinIcon() + minItem.price.toLocaleString() : "—";
+      document.getElementById("stat-min-name").textContent = minItem ? minItem.name : "";
+
+      document.getElementById("total-items").textContent = total;
+      document.getElementById("total-stock").textContent = totalStock.toLocaleString();
+      document.getElementById("out-of-stock").textContent = outOfStock;
+
+      const redCount = marketData.filter(d => d.quality === "red").length;
+      const goldCount = marketData.filter(d => d.quality === "gold").length;
+      const purpleCount = marketData.filter(d => d.quality === "purple").length;
+      document.getElementById("stat-red").textContent = redCount;
+      document.getElementById("stat-gold").textContent = goldCount;
+      document.getElementById("stat-purple").textContent = purpleCount;
+    }
+
+    // ==================== 工具函数 ====================
+    function priceClass(p) {
+      if (p === null) return "out";
+      if (p >= 10000) return "high";
+      if (p >= 1500) return "mid";
+      return "low";
+    }
+
+    function qualityClass(q) {
+      if (q === "red") return "price-red";
+      if (q === "gold") return "price-gold";
+      if (q === "purple") return "price-purple";
+      return "";
+    }
+
+    function qualityPillHTML(q) {
+      const map = { red: '红色', gold: '金色', purple: '紫色' };
+      return `<span class="quality-pill" style="--q-color:var(--color-quality-${q});--q-soft:var(--color-quality-${q}-soft)"><span></span>${map[q] || '紫色'}</span>`;
+    }
+
+    function qualityBadge(q) {
+      if (q === "red") return '<span class="quality-badge"><span class="quality-dot quality-red"></span>红色</span>';
+      if (q === "gold") return '<span class="quality-badge"><span class="quality-dot quality-gold"></span>金色</span>';
+      if (q === "purple") return '<span class="quality-badge"><span class="quality-dot quality-purple"></span>紫色</span>';
+      return '';
+    }
+
+    function coinIcon() {
+      return '<img class="coin-icon" src="hyperframes/金砖.svg" alt="" onerror="this.style.display=\'none\'">';
+    }
+
+    function formatPrice(p) {
+      if (p === null) return "缺货";
+      return coinIcon() + p.toLocaleString();
+    }
+
+    function getItemImage(item) {
+      if (item.image) return item.image;
+      return null;
+    }
+
+    function renderThumb(item, cls) {
+      const src = getItemImage(item);
+      if (src) return `<img class="${cls}" src="${src}" alt="" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"><span class="img-placeholder" style="display:none">${item.name.charAt(0)}</span>`;
+      return `<span class="img-placeholder">${item.name.charAt(0)}</span>`;
+    }
+
+    function renderThumbLarge(item) {
+      const src = getItemImage(item);
+      if (src) return `<img class="item-thumb-lg" src="${src}" alt="" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"><span class="img-placeholder-lg" style="display:none">${item.name.charAt(0)}</span>`;
+      return `<span class="img-placeholder-lg">${item.name.charAt(0)}</span>`;
+    }
+
+    function getHistoryData(name, port) {
+      let history = marketHistory[name];
+      if (history && !Array.isArray(history) && typeof history === 'object') {
+        history = (port && history[port]) ? history[port] : (history.overall || null);
+      }
+      if (history && history.length > 0) return history;
+      return null;
+    }
+
+    function trendPillHTML(history) {
+      if (!history || history.length < 2) return '';
+      const start = history[0].price;
+      const end = history[history.length - 1].price;
+      if (start === null || end === null) return '';
+      const diff = end - start;
+      const pct = start === 0 ? 0 : (diff / start * 100);
+      const cls = diff > 0 ? 'up' : (diff < 0 ? 'down' : 'flat');
+      const sign = diff > 0 ? '+' : '';
+      const icon = diff > 0 ? '↑' : (diff < 0 ? '↓' : '−');
+      return `<span class="trend-pill ${cls}">${icon} ${sign}${pct.toFixed(1)}%</span>`;
+    }
+
+    function ensureSparklineTooltip() {
+      let tip = document.getElementById('sparklineTooltip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'sparklineTooltip';
+        tip.className = 'sparkline-tooltip';
+        document.body.appendChild(tip);
+      }
+      return tip;
+    }
+
+    function showSparklineTooltip(e, h, prev) {
+      const tip = ensureSparklineTooltip();
+      const priceStr = h.price !== null ? h.price.toLocaleString() : '缺货';
+      const [m, d] = h.date.split('-').slice(1);
+      const dateStr = `${parseInt(m, 10)}月${parseInt(d, 10)}日`;
+      let changeHtml = '';
+      if (prev && prev.price !== null && h.price !== null) {
+        const diff = h.price - prev.price;
+        const pct = prev.price === 0 ? 0 : (diff / prev.price * 100);
+        const cls = diff > 0 ? 'up' : (diff < 0 ? 'down' : 'flat');
+        const sign = diff > 0 ? '+' : '';
+        const [pm, pd] = prev.date.split('-').slice(1);
+        const prevDateStr = `${parseInt(pm, 10)}月${parseInt(pd, 10)}日`;
+        const cur = new Date(h.date);
+        const pre = new Date(prev.date);
+        const dayGap = Math.max(1, Math.round((cur - pre) / 86400000));
+        changeHtml = `<div class="tt-change ${cls}">较${prevDateStr}（${dayGap}天前） ${sign}${diff.toLocaleString()} (${sign}${pct.toFixed(1)}%)</div>`;
+      }
+      tip.innerHTML = `<div class="tt-date">${dateStr}</div><div class="tt-price">${priceStr}</div>${changeHtml}`;
+      tip.classList.add('visible');
+      moveSparklineTooltip(e);
+    }
+
+    function moveSparklineTooltip(e) {
+      const tip = ensureSparklineTooltip();
+      const x = e.clientX + 12;
+      const y = e.clientY - 12 - tip.offsetHeight;
+      tip.style.left = x + 'px';
+      tip.style.top = Math.max(8, y) + 'px';
+    }
+
+    function hideSparklineTooltip() {
+      const tip = document.getElementById('sparklineTooltip');
+      if (tip) tip.classList.remove('visible');
+    }
+
+    // ==================== 今日焦点 Spotlight ====================
+    const SPOTLIGHT_POOL = [
+      { name: '织梦星空·星河入梦', reason: '今日最高价' },
+      { name: '蔷薇石', reason: '今日最低价' },
+      { name: '缝纫之刃', reason: '材料涨幅冠军' },
+      { name: '"致哀之花"的断章', reason: '断章涨幅冠军' },
+      { name: '调律纺锤', reason: '持续创新高' },
+      { name: '飘零轻羽', reason: '当前缺货' },
+      { name: '宝石和羽毛', reason: '新上架' },
+      { name: '别惹猫猫', reason: '新上架' },
+      { name: '巡游涂料', reason: '库存充足' },
+      { name: '神秘海游记', reason: '宝藏最高价', type: 'treasure' },
+      { name: '妄想羽翼·碎光', reason: '历史新高' },
+      { name: '一袋悲叹珍珠', reason: '稀缺材料' },
+      { name: '编织水母·重痕', reason: '稳步上涨' }
+    ];
+
+    let spotlightItems = [];
+    let spotlightMode = 'cards';
+    let heroIndex = 0;
+    let heroInterval = null;
+    let carouselIndex = 0;
+    let carouselInterval = null;
+    let carouselDragging = false;
+    let carouselStartX = 0;
+    let carouselCurrentAngle = 0;
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function pickSpotlightItems() {
+      const shuffled = shuffleArray(SPOTLIGHT_POOL);
+      const selected = shuffled.slice(0, 5);
+      return selected.map(cfg => {
+        const isTreasure = cfg.type === 'treasure';
+        const item = isTreasure
+          ? treasureData.find(t => t.name === cfg.name)
+          : marketData.find(d => d.name === cfg.name);
+        const history = item ? (marketHistory[item.name] || []) : [];
+        const current = history.length ? history[history.length - 1] : null;
+        const prev = history.length > 1 ? history[history.length - 2] : null;
+        const price = current ? current.price : (item ? item.price : null);
+        const prevPrice = prev ? prev.price : null;
+        const diff = (price !== null && prevPrice !== null) ? price - prevPrice : null;
+        const stock = item && !isTreasure ? item.stock : (current && current.stock !== undefined ? current.stock : null);
+        const quality = item ? (item.quality || 'purple') : 'purple';
+        const image = item ? (item.image || `hyperframes/${item.name}.png`) : null;
+        return {
+          ...cfg,
+          price,
+          prevPrice,
+          diff,
+          stock,
+          quality,
+          image,
+          history
+        };
+      }).filter(item => item.price !== null);
+    }
+
+    function qualityColors(q) {
+      const map = {
+        red: { color: '#c9372c', soft: '#fef2f2' },
+        gold: { color: '#d4a017', soft: '#fffbeb' },
+        purple: { color: '#7e57c2', soft: '#f3f0fa' }
+      };
+      return map[q] || map.purple;
+    }
+
+    function animateCountUp(el, target, duration = 1200) {
+      if (!el) return;
+      const start = performance.now();
+      const from = 0;
+      function step(now) {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const current = Math.round(from + (target - from) * eased);
+        el.textContent = current.toLocaleString();
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    function renderSpotlight() {
+      spotlightItems = pickSpotlightItems();
+      if (spotlightItems.length === 0) return;
+      document.getElementById('spotlightSection').style.display = 'block';
+      renderSpotlightCards();
+      renderSpotlightHero();
+      renderSpotlightCarousel();
+      initSpotlightEvents();
+    }
+
+    function renderSpotlightCards() {
+      const container = document.getElementById('spotlightCards');
+      const items = spotlightItems.slice(0, 3);
+      container.innerHTML = items.map(item => {
+        const qc = qualityColors(item.quality);
+        const changeHtml = item.diff !== null
+          ? `<div class="spotlight-card-change ${item.diff >= 0 ? 'up' : 'down'}">${item.diff >= 0 ? '↑' : '↓'} ${item.diff >= 0 ? '+' : ''}${item.diff.toLocaleString()} (${item.diff >= 0 ? '+' : ''}${(item.diff / item.prevPrice * 100).toFixed(1)}%)</div>`
+          : '';
+        const stockHtml = item.stock !== null ? `<div class="spotlight-card-stock">库存 ${item.stock.toLocaleString()} 件</div>` : '';
+        const img = item.image ? `<img src="${item.image}" alt="" loading="lazy" onerror="this.style.display='none'">` : '';
+        return `
+          <div class="spotlight-card" style="--q-color:${qc.color};--q-soft:${qc.soft};" data-spotlight-card>
+            <div class="spotlight-card-inner">
+              <div class="spotlight-card-glow"></div>
+              <div class="spotlight-card-media">${img}</div>
+              <div class="spotlight-card-info">
+                <div class="spotlight-card-reason">${item.reason}</div>
+                <h3 class="spotlight-card-name">${item.name}</h3>
+                <div class="spotlight-card-price" data-target="${item.price}">${item.price.toLocaleString()}</div>
+                ${changeHtml}
+                ${stockHtml}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 3D tilt
+      container.querySelectorAll('[data-spotlight-card]').forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const cx = rect.width / 2;
+          const cy = rect.height / 2;
+          const rx = (y - cy) / cy * -10;
+          const ry = (x - cx) / cx * 10;
+          card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+          card.style.setProperty('--mx', `${(x / rect.width) * 100}%`);
+          card.style.setProperty('--my', `${(y / rect.height) * 100}%`);
+          const inner = card.querySelector('.spotlight-card-media');
+          if (inner) inner.style.transform = `translateZ(30px) translateX(${(x - cx) / cx * -10}px) translateY(${(y - cy) / cy * -10}px)`;
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'rotateX(0) rotateY(0)';
+          const inner = card.querySelector('.spotlight-card-media');
+          if (inner) inner.style.transform = 'translateZ(20px)';
+        });
+      });
+
+      // count up
+      if (document.body.classList.contains('gsap-active')) {
+        container.querySelectorAll('.spotlight-card-price').forEach(el => {
+          animateCountUp(el, parseInt(el.dataset.target, 10));
+        });
+      }
+    }
+
+    function renderSpotlightHero() {
+      const item = spotlightItems[heroIndex] || spotlightItems[0];
+      if (!item) return;
+      const qc = qualityColors(item.quality);
+      const content = document.getElementById('spotlightHeroContent');
+      const media = document.getElementById('spotlightHeroMedia');
+      const hero = document.getElementById('spotlightHero');
+      hero.style.setProperty('--q-color', qc.color);
+      hero.style.setProperty('--q-soft', qc.soft);
+      const changeHtml = item.diff !== null
+        ? `<span style="color:${item.diff >= 0 ? 'var(--color-up)' : 'var(--color-down)'}">${item.diff >= 0 ? '↑' : '↓'} ${item.diff >= 0 ? '+' : ''}${item.diff.toLocaleString()} (${item.diff >= 0 ? '+' : ''}${(item.diff / item.prevPrice * 100).toFixed(1)}%)</span>`
+        : '';
+      const stockHtml = item.stock !== null ? `<span>库存 <strong>${item.stock.toLocaleString()} 件</strong></span>` : '';
+      const img = item.image ? `<img src="${item.image}" alt="" loading="lazy" onerror="this.style.display='none'">` : '';
+      content.innerHTML = `
+        <div class="spotlight-hero-reason">${item.reason}</div>
+        <h3 class="spotlight-hero-name">${item.name}</h3>
+        <div class="spotlight-hero-price" data-target="${item.price}">${item.price.toLocaleString()}</div>
+        <div class="spotlight-hero-meta">
+          ${stockHtml}
+          ${changeHtml}
+        </div>
+      `;
+      media.innerHTML = img;
+
+      const dots = document.getElementById('spotlightHeroDots');
+      dots.innerHTML = spotlightItems.map((_, i) => `
+        <button class="spotlight-hero-dot ${i === heroIndex ? 'active' : ''}" data-index="${i}" style="--q-color:${qc.color}"></button>
+      `).join('');
+
+      if (document.body.classList.contains('gsap-active')) {
+        const priceEl = content.querySelector('.spotlight-hero-price');
+        animateCountUp(priceEl, item.price);
+      }
+    }
+
+    function renderSpotlightCarousel() {
+      const stage = document.getElementById('spotlightCarouselStage');
+      const dots = document.getElementById('spotlightCarouselDots');
+      stage.innerHTML = spotlightItems.map((item, i) => {
+        const qc = qualityColors(item.quality);
+        const changeHtml = item.diff !== null
+          ? `<div style="font-size:0.75rem;color:${item.diff >= 0 ? 'var(--color-up)' : 'var(--color-down)'};margin-bottom:4px">${item.diff >= 0 ? '↑' : '↓'} ${item.diff >= 0 ? '+' : ''}${item.diff.toLocaleString()}</div>`
+          : '';
+        const stockHtml = item.stock !== null ? `<div class="spotlight-carousel-card-stock">库存 ${item.stock.toLocaleString()} 件</div>` : '';
+        const img = item.image ? `<img src="${item.image}" alt="" loading="lazy" onerror="this.style.display='none'">` : '';
+        return `
+          <div class="spotlight-carousel-card" data-index="${i}" style="--q-color:${qc.color};--q-soft:${qc.soft};">
+            <div class="spotlight-carousel-card-media">${img}</div>
+            <div class="spotlight-carousel-card-reason">${item.reason}</div>
+            <h4 class="spotlight-carousel-card-name">${item.name}</h4>
+            <div class="spotlight-carousel-card-price">${item.price.toLocaleString()}</div>
+            ${changeHtml}
+            ${stockHtml}
+          </div>
+        `;
+      }).join('');
+      dots.innerHTML = spotlightItems.map((_, i) => `
+        <button class="spotlight-carousel-dot ${i === carouselIndex ? 'active' : ''}" data-index="${i}"></button>
+      `).join('');
+      updateCarouselTransform();
+    }
+
+    function updateCarouselTransform() {
+      const count = spotlightItems.length;
+      if (!count) return;
+      const cards = document.querySelectorAll('.spotlight-carousel-card');
+      const step = 160; // horizontal offset
+      cards.forEach((card, i) => {
+        const offset = i - carouselIndex;
+        const abs = Math.abs(offset);
+        const translateX = offset * step;
+        const scale = abs === 0 ? 1 : (abs === 1 ? 0.88 : 0.75);
+        const opacity = abs === 0 ? 1 : (abs === 1 ? 0.65 : 0.35);
+        const zIndex = 100 - abs;
+        const rotateY = offset * -8;
+        card.style.transform = `translateX(${translateX}px) scale(${scale}) rotateY(${rotateY}deg)`;
+        card.style.opacity = opacity;
+        card.style.zIndex = zIndex;
+      });
+      document.querySelectorAll('.spotlight-carousel-dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === carouselIndex);
+      });
+    }
+
+    function rotateCarousel(dir) {
+      const count = spotlightItems.length;
+      if (!count) return;
+      carouselIndex = (carouselIndex + dir + count) % count;
+      updateCarouselTransform();
+    }
+
+    function goToCarousel(index) {
+      const count = spotlightItems.length;
+      if (!count) return;
+      carouselIndex = ((index % count) + count) % count;
+      updateCarouselTransform();
+    }
+
+    function startHeroAutoRotate() {
+      stopHeroAutoRotate();
+      heroInterval = setInterval(() => {
+        heroIndex = (heroIndex + 1) % spotlightItems.length;
+        renderSpotlightHero();
+      }, 5000);
+    }
+
+    function stopHeroAutoRotate() {
+      if (heroInterval) { clearInterval(heroInterval); heroInterval = null; }
+    }
+
+    function startCarouselAutoRotate() {
+      stopCarouselAutoRotate();
+      carouselInterval = setInterval(() => {
+        rotateCarousel(1);
+      }, 4000);
+    }
+
+    function stopCarouselAutoRotate() {
+      if (carouselInterval) { clearInterval(carouselInterval); carouselInterval = null; }
+    }
+
+    function switchSpotlightMode(mode) {
+      spotlightMode = mode;
+      document.querySelectorAll('.spotlight-mode-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === mode));
+      document.querySelectorAll('.spotlight-panel').forEach(panel => panel.classList.toggle('active', panel.dataset.mode === mode));
+      stopHeroAutoRotate();
+      stopCarouselAutoRotate();
+      if (mode === 'hero') startHeroAutoRotate();
+      if (mode === 'carousel') startCarouselAutoRotate();
+      if (document.body.classList.contains('gsap-active')) {
+        setTimeout(() => ScrollTrigger.refresh(), 100);
+      }
+    }
+
+    function initSpotlightEvents() {
+      document.querySelectorAll('.spotlight-mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchSpotlightMode(btn.dataset.mode));
+      });
+
+      document.getElementById('spotlightHeroDots').addEventListener('click', e => {
+        if (e.target.classList.contains('spotlight-hero-dot')) {
+          heroIndex = parseInt(e.target.dataset.index, 10);
+          renderSpotlightHero();
+          stopHeroAutoRotate();
+          startHeroAutoRotate();
+        }
+      });
+
+      const heroContent = document.getElementById('spotlightHeroContent');
+      const heroMedia = document.getElementById('spotlightHeroMedia');
+      [heroContent, heroMedia].forEach(el => {
+        el.addEventListener('mouseenter', stopHeroAutoRotate);
+        el.addEventListener('mouseleave', startHeroAutoRotate);
+      });
+
+      document.getElementById('spotlightCarouselDots').addEventListener('click', e => {
+        if (e.target.classList.contains('spotlight-carousel-dot')) {
+          goToCarousel(parseInt(e.target.dataset.index, 10));
+          stopCarouselAutoRotate();
+          startCarouselAutoRotate();
+        }
+      });
+
+      const dragEl = document.getElementById('spotlightCarouselDrag');
+      dragEl.addEventListener('mousedown', e => {
+        carouselDragging = true;
+        carouselStartX = e.clientX;
+        stopCarouselAutoRotate();
+      });
+      window.addEventListener('mousemove', e => {
+        if (!carouselDragging) return;
+        const dx = e.clientX - carouselStartX;
+        if (Math.abs(dx) > 50) {
+          rotateCarousel(dx > 0 ? -1 : 1);
+          carouselStartX = e.clientX;
+        }
+      });
+      window.addEventListener('mouseup', () => {
+        if (carouselDragging) {
+          carouselDragging = false;
+          startCarouselAutoRotate();
+        }
+      });
+      dragEl.addEventListener('touchstart', e => {
+        carouselDragging = true;
+        carouselStartX = e.touches[0].clientX;
+        stopCarouselAutoRotate();
+      }, { passive: true });
+      window.addEventListener('touchmove', e => {
+        if (!carouselDragging) return;
+        const dx = e.touches[0].clientX - carouselStartX;
+        if (Math.abs(dx) > 50) {
+          rotateCarousel(dx > 0 ? -1 : 1);
+          carouselStartX = e.touches[0].clientX;
+        }
+      }, { passive: true });
+      window.addEventListener('touchend', () => {
+        if (carouselDragging) {
+          carouselDragging = false;
+          startCarouselAutoRotate();
+        }
+      });
+
+      // default start
+      stopHeroAutoRotate();
+      stopCarouselAutoRotate();
+      if (spotlightMode === 'hero') startHeroAutoRotate();
+      if (spotlightMode === 'carousel') startCarouselAutoRotate();
+    }
+
+    // ==================== 折线图 ====================
+    function renderSparkline(svg, name, currentPrice, port) {
+      const history = getHistoryData(name, port);
+      if (history === null || history.length === 0) {
+        svg.innerHTML = '<text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" fill="var(--color-muted)" font-size="10" font-family="var(--font-ui)">缺货</text>';
+        return;
+      }
+      const values = history.map(h => h.price);
+      const width = 100, height = 56, pad = 5;
+      const min = Math.min(...values) * 0.98;
+      const max = Math.max(...values) * 1.02;
+      const range = max - min || 1;
+      const stepX = values.length > 1 ? (width - pad * 2) / (values.length - 1) : 0;
+      const coords = values.map((v, i) => ({
+        x: pad + i * stepX,
+        y: height - pad - ((v - min) / range) * (height - pad * 2)
+      }));
+      const points = coords.map(c => `${c.x},${c.y}`).join(" ");
+      const area = `${points} ${width - pad},${height} ${pad},${height}`;
+
+      const startPrice = values[0];
+      const endPrice = values[values.length - 1];
+      const isUp = endPrice > startPrice;
+      const isFlat = endPrice === startPrice;
+      const color = isUp ? 'var(--color-up)' : (isFlat ? 'var(--color-muted)' : 'var(--color-down)');
+      const gradId = 'grad-' + name.replace(/[^a-zA-Z0-9]/g, "") + (port ? '-' + port.replace(/[^a-zA-Z0-9]/g, "") : '');
+
+      svg.innerHTML = `
+        <defs>
+          <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="${color}" stop-opacity="0.22" />
+            <stop offset="100%" stop-color="${color}" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <polygon points="${area}" fill="url(#${gradId})" />
+        <polyline points="${points}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+        ${coords.map((c, i) => `<circle cx="${c.x}" cy="${c.y}" r="2.2" fill="${color}" class="spark-point" data-idx="${i}" />`).join('')}
+        ${coords.map((c, i) => `<rect x="${c.x - stepX / 2}" y="0" width="${stepX}" height="${height}" fill="transparent" class="spark-hit" data-idx="${i}" />`).join('')}
+      `;
+
+      const hits = svg.querySelectorAll('.spark-hit');
+      hits.forEach(hit => {
+        hit.addEventListener('mouseenter', (e) => {
+          const idx = parseInt(hit.dataset.idx);
+          const h = history[idx];
+          const prev = idx > 0 ? history[idx - 1] : null;
+          showSparklineTooltip(e, h, prev);
+          const point = svg.querySelector(`.spark-point[data-idx="${idx}"]`);
+          if (point) { point.setAttribute('r', '3.8'); point.setAttribute('stroke', '#fff'); point.setAttribute('stroke-width', '1.5'); }
+        });
+        hit.addEventListener('mousemove', (e) => moveSparklineTooltip(e));
+        hit.addEventListener('mouseleave', () => {
+          hideSparklineTooltip();
+          const idx = parseInt(hit.dataset.idx);
+          const point = svg.querySelector(`.spark-point[data-idx="${idx}"]`);
+          if (point) { point.setAttribute('r', '2.2'); point.removeAttribute('stroke'); point.removeAttribute('stroke-width'); }
+        });
+      });
+    }
+
+    // ==================== 渲染网格 ====================
+    const marketGrid = document.getElementById("marketGrid");
+    const searchMarket = document.getElementById("searchMarket");
+    const marketFilterBtns = document.querySelectorAll('.filter-group:not(.quality-filter) .filter-btn');
+    const qualityFilterBtns = document.querySelectorAll('.quality-filter .filter-btn');
+
+    function renderMarketGrid(rows) {
+      marketGrid.innerHTML = "";
+      if (rows.length === 0) { marketGrid.innerHTML = '<p class="empty-tip">未找到匹配商品</p>'; return; }
+      const groups = [{ key: "外观", title: "外观" }, { key: "断章", title: "断章" }, { key: "材料", title: "材料" }];
+      groups.forEach(g => {
+        let items = rows.filter(d => d.category === g.key);
+        if (g.key === "材料") items = items.filter(d => materialWhitelist.has(d.name));
+        if (items.length === 0) return;
+        const groupEl = document.createElement("div");
+        groupEl.innerHTML = `<h3 class="group-title">${g.title} <span style="color:var(--color-muted);font-size:0.85rem;font-family:var(--font-ui)">(${items.length})</span></h3>`;
+        const grid = document.createElement("div");
+        grid.className = "market-grid";
+        items.forEach((d, idx) => {
+          const q = d.quality || 'purple';
+          const card = document.createElement("div");
+          card.className = "item-card";
+          card.style.animationDelay = (idx * 50) + "ms";
+          card.style.setProperty('--q-color', `var(--color-quality-${q})`);
+          card.style.setProperty('--q-soft', `var(--color-quality-${q}-soft)`);
+          card.innerHTML = `
+            <div class="card-body">
+              <div class="card-media">
+                ${renderThumbLarge(d)}
+              </div>
+              <div class="card-info">
+                <div class="card-top">
+                  <h3 class="card-name" title="${d.name}">${d.name}</h3>
+                  <span class="stock-pill">${d.price === null ? '缺货' : d.stock.toLocaleString() + ' 件'}</span>
+                </div>
+                <div class="card-price ${d.price === null ? 'out' : ''}">${formatPrice(d.price)}${trendPillHTML(getHistoryData(d.name))}</div>
+              </div>
+            </div>
+            <div class="card-chart">
+              <div class="sparkline-wrap"><svg class="sparkline" viewBox="0 0 100 56" preserveAspectRatio="none" id="m-spark-${g.key}-${idx}"></svg></div>
+              <div class="sparkline-labels"><span>${marketDays[0]}</span><span>${marketDays[marketDays.length - 1]}</span></div>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+        groupEl.appendChild(grid);
+        marketGrid.appendChild(groupEl);
+        items.forEach((d, idx) => {
+          const svg = document.getElementById(`m-spark-${g.key}-${idx}`);
+          if (svg) renderSparkline(svg, d.name, d.price);
+        });
+      });
+      if (document.body.classList.contains('gsap-active')) refreshDynamicAnimations();
+    }
+
+    function applyMarketFilter() {
+      let filtered = marketData;
+      if (activeMarketFilter !== "all") filtered = filtered.filter(d => d.category === activeMarketFilter);
+      if (activeQualityFilter !== "all") filtered = filtered.filter(d => d.quality === activeQualityFilter);
+      const q = searchMarket.value.trim().toLowerCase();
+      if (q) filtered = filtered.filter(d => d.name.toLowerCase().includes(q));
+      renderMarketGrid(filtered);
+    }
+
+    marketFilterBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        marketFilterBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeMarketFilter = btn.dataset.filter;
+        applyMarketFilter();
+      });
+    });
+
+    qualityFilterBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        qualityFilterBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeQualityFilter = btn.dataset.quality;
+        applyMarketFilter();
+      });
+    });
+    searchMarket.addEventListener("input", applyMarketFilter);
+
+    // ==================== 视图切换 ====================
+    const viewTabs = document.querySelectorAll(".view-tab");
+    const marketPanel = document.getElementById("marketPanel");
+    const treasurePanel = document.getElementById("treasurePanel");
+
+    viewTabs.forEach(btn => {
+      btn.addEventListener("click", () => {
+        viewTabs.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeView = btn.dataset.view;
+        marketPanel.style.display = activeView === "market" ? "block" : "none";
+        treasurePanel.style.display = activeView === "treasure" ? "block" : "none";
+        if (activeView === "treasure") renderTreasureBlocks();
+        if (document.body.classList.contains('gsap-active')) {
+          setTimeout(() => { ScrollTrigger.refresh(); refreshDynamicAnimations(); }, 50);
+        }
+      });
+    });
+
+    // ==================== 宝藏交易表格 ====================
+    const searchTreasure = document.getElementById("searchTreasure");
+
+    const TIER_LABELS = { grey: "灰框", green: "绿框", blue: "蓝框", purple: "紫框", gold: "金条" };
+
+    function renderTierCard(tier, name, treasureImage) {
+      const label = TIER_LABELS[name];
+      if (!tier || tier.min == null) {
+        return `<div class="tier-card tier-${name}"><div class="tier-card-label">${label}</div><div class="tier-card-price">—</div></div>`;
+      }
+      const price = tier.min.toLocaleString();
+      const range = tier.min === tier.max ? "" : `${tier.min.toLocaleString()}→${tier.max.toLocaleString()}`;
+      return `
+        <div class="tier-card tier-${name}">
+          <img src="${treasureImage || ""}" alt="" loading="lazy" onerror="this.style.display='none'">
+          <div class="tier-card-label">${label}</div>
+          <div class="tier-card-price">${price}</div>
+          ${range ? `<div class="tier-card-range">${range}</div>` : ""}
+        </div>
+      `;
+    }
+
+    function renderTreasureBlocks(rows = treasureData) {
+      const container = document.getElementById("treasureBlocks");
+      if (!container) return;
+      const q = searchTreasure ? searchTreasure.value.trim().toLowerCase() : "";
+      const filtered = rows.filter(t =>
+        t.name.toLowerCase().includes(q) || (t.ports || []).some(p => p.name.toLowerCase().includes(q))
+      );
+      if (filtered.length === 0) {
+        container.innerHTML = '<p class="empty-tip">未找到匹配宝藏</p>';
+        return;
+      }
+      container.innerHTML = filtered.map((t, idx) => {
+        const greyMax = t.tiers?.grey?.max ?? 0;
+        const purpleMax = t.tiers?.purple?.max ?? 0;
+        const goldMax = t.tiers?.gold?.max ?? 0;
+        const portRange = greyMax && purpleMax
+          ? `${greyMax.toLocaleString()}~${purpleMax.toLocaleString()}`
+          : "—";
+        const goldPrice = goldMax ? goldMax.toLocaleString() : "—";
+        const portsHTML = (t.ports || []).map((p, pi) => {
+          const pr = (p.price && p.price.min != null)
+            ? `${p.price.min.toLocaleString()}~${p.price.max != null ? p.price.max.toLocaleString() : ""}`
+            : portRange;
+          return `
+          <div class="treasure-port-line" data-port="${p.name}" data-flag="${p.flag_image || ""}">
+            <img class="port-thumb" src="${p.image || ""}" alt="" loading="lazy" onerror="this.style.display='none'">
+            <span class="port-name">${p.name}</span>
+            <span class="port-range">当前价格区间 <strong>${pr}</strong> / ${coinIcon()}<strong>${goldPrice}</strong></span>
+            <div class="port-spark-wrap"><svg class="sparkline" viewBox="0 0 100 56" preserveAspectRatio="none" id="t-port-spark-${idx}-${pi}"></svg></div>
+          </div>
+          `;
+        }).join("");
+        const currentPrice = t.tiers?.purple?.min ?? null;
+        return `
+        <div class="treasure-block">
+          <div class="treasure-header">
+            <img class="treasure-thumb" src="${t.image || ""}" alt="" loading="lazy" onerror="this.style.display='none'">
+            <h3 class="treasure-title">${t.name}</h3>
+          </div>
+          <div class="treasure-tier-row">
+            ${renderTierCard(t.tiers?.grey, "grey", t.image)}
+            ${renderTierCard(t.tiers?.green, "green", t.image)}
+            ${renderTierCard(t.tiers?.blue, "blue", t.image)}
+            ${renderTierCard(t.tiers?.purple, "purple", t.image)}
+            ${renderTierCard(t.tiers?.gold, "gold", t.image)}
+          </div>
+          <div class="card-chart" style="margin: 0 0 12px;">
+            <div class="sparkline-wrap"><svg class="sparkline" viewBox="0 0 100 56" preserveAspectRatio="none" id="t-spark-${idx}"></svg></div>
+            <div class="sparkline-labels"><span>${marketDays[0] || ""}</span><span>${marketDays[marketDays.length - 1] || ""}</span></div>
+          </div>
+          <div class="treasure-ports">
+            ${portsHTML}
+          </div>
+        </div>
+        `;
+      }).join("");
+
+      filtered.forEach((t, idx) => {
+        const svg = document.getElementById(`t-spark-${idx}`);
+        const currentPrice = t.tiers?.purple?.min ?? null;
+        if (svg) renderSparkline(svg, t.name, currentPrice);
+        (t.ports || []).forEach((p, pi) => {
+          const psvg = document.getElementById(`t-port-spark-${idx}-${pi}`);
+          if (psvg) renderSparkline(psvg, t.name, p.price ? p.price.max : null, p.name);
+        });
+      });
+      if (document.body.classList.contains('gsap-active')) refreshDynamicAnimations();
+    }
+
+    if (searchTreasure) searchTreasure.addEventListener("input", () => renderTreasureBlocks());
+
+    // ==================== 点击港口显示旗帜 ====================
+    const flagImage = document.getElementById("flagImage");
+    const flagName = document.getElementById("flagName");
+    const flagPlaceholder = document.querySelector(".flag-placeholder");
+
+    document.getElementById("treasureBlocks").addEventListener("click", e => {
+      const line = e.target.closest(".treasure-port-line");
+      if (!line) return;
+      const src = line.dataset.flag;
+      const name = line.dataset.port;
+      if (src && flagImage) {
+        flagImage.src = src;
+        flagImage.alt = name || "";
+        flagImage.style.display = "block";
+        if (flagPlaceholder) flagPlaceholder.style.display = "none";
+        if (flagName) flagName.textContent = name || "";
+      }
+    });
+
+    // ==================== 渲染表格 ====================
+    function renderMarketTable() {
+      const tbody = document.getElementById("marketTableBody");
+      let rows = [...marketData].sort((a, b) => {
+        let av = a[marketSortKey], bv = b[marketSortKey];
+        if (marketSortKey === "price") { av = av === null ? -1 : av; bv = bv === null ? -1 : bv; }
+        if (typeof av === "string") return marketSortDesc ? bv.localeCompare(av, "zh") : av.localeCompare(bv, "zh");
+        return marketSortDesc ? bv - av : av - bv;
+      });
+      tbody.innerHTML = rows.map(d => `
+        <tr>
+          <td class="td-name">${renderThumb(d, "item-thumb")}${d.name}</td>
+          <td><span class="pill">${d.category}</span></td>
+          <td><span class="pill">${d.item_type || '-'}</span></td>
+          <td>${qualityPillHTML(d.quality)}</td>
+          <td class="td-price ${qualityClass(d.quality)}">${formatPrice(d.price)}</td>
+          <td class="td-price">${d.stock === 0 ? '<span style="color:var(--color-muted);font-style:italic">0 件</span>' : d.stock.toLocaleString() + " 件"}</td>
+        </tr>
+      `).join("");
+      document.querySelectorAll("th[data-key]").forEach(th => {
+        th.classList.remove("sort-asc", "sort-desc");
+        if (th.dataset.key === marketSortKey) th.classList.add(marketSortDesc ? "sort-desc" : "sort-asc");
+      });
+      if (document.body.classList.contains('gsap-active')) refreshDynamicAnimations();
+    }
+
+    document.querySelectorAll("th[data-key]").forEach(th => {
+      th.addEventListener("click", () => {
+        const key = th.dataset.key;
+        if (marketSortKey === key) marketSortDesc = !marketSortDesc;
+        else { marketSortKey = key; marketSortDesc = key === "price" || key === "stock"; }
+        renderMarketTable();
+      });
+    });
+
+    // ==================== 滚动动画 (Lenis + GSAP ScrollTrigger) ====================
+    let lenis = null;
+    let dynamicTriggers = [];
+
+    function setupAnimations() {
+      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined' || typeof Lenis === 'undefined') return;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) return;
+
+      gsap.registerPlugin(ScrollTrigger);
+      document.body.classList.add('gsap-active');
+
+      // Lenis smooth scroll + GSAP ticker sync
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        touchMultiplier: 2,
+      });
+
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+      });
+      gsap.ticker.lagSmoothing(0);
+
+      // Header 视差
+      gsap.to('header', {
+        scrollTrigger: {
+          trigger: 'header',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1,
+        },
+        y: 60,
+        opacity: 0.6,
+        ease: 'none'
+      });
+
+      // Stats 卡片交错入场
+      gsap.from('.stat-card', {
+        scrollTrigger: {
+          trigger: '.stats-grid',
+          start: 'top 85%',
+          toggleActions: 'play none none reverse'
+        },
+        y: 50,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.08,
+        ease: 'power2.out'
+      });
+
+      // 统计文字行
+      gsap.from('.topline', {
+        scrollTrigger: {
+          trigger: '.topline',
+          start: 'top 90%',
+          toggleActions: 'play none none reverse'
+        },
+        y: 20,
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power2.out'
+      });
+
+      // 控制区
+      gsap.from('.controls', {
+        scrollTrigger: {
+          trigger: '.controls',
+          start: 'top 90%',
+          toggleActions: 'play none none reverse'
+        },
+        y: 20,
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power2.out'
+      });
+
+      // 章节标题
+      gsap.utils.toArray('.section-title').forEach(title => {
+        gsap.from(title, {
+          scrollTrigger: {
+            trigger: title,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          },
+          y: 30,
+          opacity: 0,
+          duration: 0.7,
+          ease: 'power2.out'
+        });
+      });
+
+      // 章节描述
+      gsap.utils.toArray('.section-desc').forEach(desc => {
+        gsap.from(desc, {
+          scrollTrigger: {
+            trigger: desc,
+            start: 'top 88%',
+            toggleActions: 'play none none reverse'
+          },
+          y: 20,
+          opacity: 0,
+          duration: 0.6,
+          delay: 0.1,
+          ease: 'power2.out'
+        });
+      });
+
+      // 视图 Tab
+      gsap.from('.view-tabs', {
+        scrollTrigger: {
+          trigger: '.view-tabs',
+          start: 'top 90%',
+          toggleActions: 'play none none reverse'
+        },
+        y: 20,
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power2.out'
+      });
+
+      refreshDynamicAnimations();
+    }
+
+    function clearDynamicTriggers() {
+      dynamicTriggers.forEach(st => st.kill());
+      dynamicTriggers = [];
+    }
+
+    function refreshDynamicAnimations() {
+      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) return;
+
+      clearDynamicTriggers();
+
+      // 商品卡片：按组批量交错入场 + 轻微视差
+      const grids = gsap.utils.toArray('.market-grid');
+      grids.forEach(grid => {
+        const cards = grid.querySelectorAll('.item-card');
+        cards.forEach((card, i) => {
+          const tween = gsap.from(card, {
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 90%',
+              toggleActions: 'play none none reverse',
+              onEnter: () => {},
+              once: true
+            },
+            y: 60,
+            opacity: 0,
+            scale: 0.96,
+            duration: 0.7,
+            delay: (i % 3) * 0.08,
+            ease: 'power2.out'
+          });
+          if (tween.scrollTrigger) dynamicTriggers.push(tween.scrollTrigger);
+        });
+      });
+
+      // 行情表行
+      const rows = document.querySelectorAll('#marketTableBody tr');
+      rows.forEach((row, i) => {
+        const tween = gsap.from(row, {
+          scrollTrigger: {
+            trigger: row,
+            start: 'top 95%',
+            toggleActions: 'play none none reverse',
+            once: true
+          },
+          y: 20,
+          opacity: 0,
+          duration: 0.5,
+          delay: (i % 10) * 0.03,
+          ease: 'power2.out'
+        });
+        if (tween.scrollTrigger) dynamicTriggers.push(tween.scrollTrigger);
+      });
+
+      // 宝藏区块
+      const treasureBlocks = document.querySelectorAll('.treasure-block');
+      treasureBlocks.forEach((block, i) => {
+        const tween = gsap.from(block, {
+          scrollTrigger: {
+            trigger: block,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+            once: true
+          },
+          y: 70,
+          opacity: 0,
+          duration: 0.9,
+          delay: (i % 2) * 0.12,
+          ease: 'power2.out'
+        });
+        if (tween.scrollTrigger) dynamicTriggers.push(tween.scrollTrigger);
+      });
+
+      // 侧边旗帜卡片视差
+      const flagPanel = document.querySelector('.flag-panel');
+      if (flagPanel) {
+        const tween = gsap.to(flagPanel, {
+          scrollTrigger: {
+            trigger: '#treasurePanel',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1,
+          },
+          y: -40,
+          ease: 'none'
+        });
+        if (tween.scrollTrigger) dynamicTriggers.push(tween.scrollTrigger);
+      }
+
+      ScrollTrigger.refresh();
+    }
+
+    // ==================== 初始化 ====================
+    async function init() {
+      await loadData();
+      renderMarketGrid(marketData);
+      renderMarketTable();
+      renderTreasureBlocks();
+      renderSpotlight();
+      setupAnimations();
+    }
+    init().catch(err => {
+      console.error("初始化失败", err);
+      document.getElementById("marketGrid").innerHTML = '<p class="empty-tip">数据加载失败，请确认 prices.json 和 history.json 存在。</p>';
+    });
+  
+    // ==================== 社交图标跳转确认 ====================
+    (function () {
+      const overlay = document.getElementById("brandModalOverlay");
+      const iconEl = document.getElementById("brandModalIcon");
+      const titleEl = document.getElementById("brandModalTitle");
+      const linkEl = document.getElementById("brandModalLink");
+      const cancelBtn = document.getElementById("brandModalCancel");
+      const goBtn = document.getElementById("brandModalGo");
+      let pendingUrl = "";
+
+      function openModal(brand, color, url, imgEl, label) {
+        pendingUrl = url;
+        iconEl.style.background = color;
+        iconEl.innerHTML = "";
+        if (imgEl && imgEl.style.display !== "none") {
+          const clone = imgEl.cloneNode(false);
+          clone.style.display = "";
+          iconEl.appendChild(clone);
+        } else {
+          iconEl.textContent = label;
+        }
+        titleEl.textContent = "即将跳转到" + brand;
+        linkEl.textContent = url;
+        overlay.classList.add("is-open");
+      }
+      function closeModal() {
+        overlay.classList.remove("is-open");
+        pendingUrl = "";
+      }
+      function go() {
+        if (pendingUrl) window.open(pendingUrl, "_blank", "noopener,noreferrer");
+        closeModal();
+      }
+
+      document.querySelectorAll(".footer-brand").forEach(function (a) {
+        a.addEventListener("click", function (ev) {
+          ev.preventDefault();
+          const url = a.getAttribute("data-link") || a.getAttribute("href") || "#";
+          if (!url || url === "#") return;
+          const brand = a.getAttribute("aria-label") || "该平台";
+          const color = getComputedStyle(a).getPropertyValue("--brand-color").trim() || "#2c3e50";
+          const fallback = a.querySelector(".footer-brand-fallback");
+          const label = fallback ? fallback.textContent : brand.slice(0, 1);
+          const imgEl = a.querySelector("img");
+          openModal(brand, color, url, imgEl, label);
+        });
+      });
+
+      cancelBtn.addEventListener("click", closeModal);
+      goBtn.addEventListener("click", go);
+      overlay.addEventListener("click", function (ev) {
+        if (ev.target === overlay) closeModal();
+      });
+      document.addEventListener("keydown", function (ev) {
+        if (ev.key === "Escape") closeModal();
+      });
+    })();
+
+  </script>
+</body>
+</html>

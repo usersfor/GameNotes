@@ -1,0 +1,501 @@
+{
+  "meta": {
+    "snapshot_date": "2026-07-23",
+    "total_items": 49,
+    "out_of_stock": 1,
+    "max_price": 237500,
+    "min_price": 9
+  },
+  "items": [
+    {
+      "id": 1,
+      "name": "织梦星空·星河入梦",
+      "category": "外观",
+      "item_type": "外观",
+      "quality": "red",
+      "price": 237500,
+      "stock": 1,
+      "image": "hyperframes/织梦星空·星河入梦.png"
+    },
+    {
+      "id": 2,
+      "name": "织梦星空·星海吟",
+      "category": "外观",
+      "item_type": "武器",
+      "quality": "red",
+      "price": 171000,
+      "stock": 3,
+      "image": "hyperframes/织梦星空·星海吟.png"
+    },
+    {
+      "id": 3,
+      "name": "织梦星空·拾星瓶",
+      "category": "外观",
+      "item_type": "饰品",
+      "quality": "red",
+      "price": 135000,
+      "stock": 1,
+      "image": "hyperframes/织梦星空·拾星瓶.png"
+    },
+    {
+      "id": 4,
+      "name": "妄想羽翼·夜染白翎",
+      "category": "外观",
+      "item_type": "外观",
+      "quality": "gold",
+      "price": 44000,
+      "stock": 42,
+      "image": "hyperframes/妄想羽翼·夜染白翎.png"
+    },
+    {
+      "id": 5,
+      "name": "妄想羽翼·碎光",
+      "category": "外观",
+      "item_type": "武器",
+      "quality": "gold",
+      "price": 31250,
+      "stock": 39,
+      "image": "hyperframes/妄想羽翼·碎光.png"
+    },
+    {
+      "id": 6,
+      "name": "妄想羽翼·笼中玫瑰",
+      "category": "外观",
+      "item_type": "饰品",
+      "quality": "gold",
+      "price": 25000,
+      "stock": 42,
+      "image": "hyperframes/妄想羽翼·笼中玫瑰.png"
+    },
+    {
+      "id": 9,
+      "name": "调律纺锤",
+      "category": "材料",
+      "item_type": "道具",
+      "quality": "gold",
+      "price": 10575,
+      "stock": 35,
+      "image": "hyperframes/调律纺锤.png"
+    },
+    {
+      "id": 15,
+      "name": "\"安眠人偶\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "gold",
+      "price": 6839,
+      "stock": 84,
+      "image": "hyperframes/“安眠人偶”的的断章.png"
+    },
+    {
+      "id": 18,
+      "name": "\"鱼骨串\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "gold",
+      "price": 6720,
+      "stock": 36,
+      "image": "hyperframes/“鱼骨串”的断章.png"
+    },
+    {
+      "id": 37,
+      "name": "一袋悲叹珍珠",
+      "category": "材料",
+      "item_type": "材料",
+      "quality": "purple",
+      "price": 6625,
+      "stock": 4,
+      "image": "hyperframes/一袋悲叹珍珠.png"
+    },
+    {
+      "id": 27,
+      "name": "缝纫之刃·重痕",
+      "category": "材料",
+      "item_type": "武器",
+      "quality": "purple",
+      "price": 6460,
+      "stock": 3,
+      "image": "hyperframes/缝纫之刃·重痕.png"
+    },
+    {
+      "id": 13,
+      "name": "\"致哀之花\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "gold",
+      "price": 5460,
+      "stock": 49,
+      "image": "hyperframes/“致哀之花”的断章.png"
+    },
+    {
+      "id": 21,
+      "name": "缝纫之刃",
+      "category": "材料",
+      "item_type": "武器",
+      "quality": "purple",
+      "price": 5253,
+      "stock": 233,
+      "image": "hyperframes/缝纫之刃.png"
+    },
+    {
+      "id": 11,
+      "name": "\"文明法则\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "gold",
+      "price": 4305,
+      "stock": 69,
+      "image": "hyperframes/“文明法则”的断章.png"
+    },
+    {
+      "id": 26,
+      "name": "缝纫之刃·轻痕",
+      "category": "材料",
+      "item_type": "武器",
+      "quality": "purple",
+      "price": 4284,
+      "stock": 26,
+      "image": "hyperframes/缝纫之刃·轻痕.png"
+    },
+    {
+      "id": 12,
+      "name": "\"狂想曲\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "gold",
+      "price": 3202,
+      "stock": 75,
+      "image": "hyperframes/“狂想曲”的断章.png"
+    },
+    {
+      "id": 16,
+      "name": "\"遗落珠宝\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "gold",
+      "price": 3195,
+      "stock": 63,
+      "image": "hyperframes/“遗落珠宝”的断章.png"
+    },
+    {
+      "id": 17,
+      "name": "\"缎带泪\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "gold",
+      "price": 3150,
+      "stock": 88,
+      "image": "hyperframes/“缎带泪”的断章.png"
+    },
+    {
+      "id": 14,
+      "name": "\"他的战争\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "gold",
+      "price": 3044,
+      "stock": 118,
+      "image": "hyperframes/“他的战争”的断章.png"
+    },
+    {
+      "id": 34,
+      "name": "编织水母·重痕",
+      "category": "材料",
+      "item_type": "饰品",
+      "quality": "purple",
+      "price": 2700,
+      "stock": 5,
+      "image": "hyperframes/编织水母·重痕.png"
+    },
+    {
+      "id": 25,
+      "name": "凌乱药剂瓶·重痕",
+      "category": "材料",
+      "item_type": "消耗品",
+      "quality": "purple",
+      "price": 2346,
+      "stock": 72,
+      "image": "hyperframes/凌乱药剂瓶·重痕.png"
+    },
+    {
+      "id": 23,
+      "name": "蜘蛛之刃·重痕",
+      "category": "材料",
+      "item_type": "武器",
+      "quality": "purple",
+      "price": 2244,
+      "stock": 331,
+      "image": "hyperframes/蜘蛛之刃·重痕.png"
+    },
+    {
+      "id": 19,
+      "name": "蜘蛛之刃",
+      "category": "材料",
+      "item_type": "武器",
+      "quality": "purple",
+      "price": 2244,
+      "stock": 320,
+      "image": "hyperframes/蜘蛛之刃.png"
+    },
+    {
+      "id": 24,
+      "name": "凌乱药剂瓶·轻痕",
+      "category": "材料",
+      "item_type": "消耗品",
+      "quality": "purple",
+      "price": 2244,
+      "stock": 191,
+      "image": "hyperframes/凌乱药剂瓶·轻痕.png"
+    },
+    {
+      "id": 22,
+      "name": "蜘蛛之刃·轻痕",
+      "category": "材料",
+      "item_type": "武器",
+      "quality": "purple",
+      "price": 2244,
+      "stock": 92,
+      "image": "hyperframes/蜘蛛之刃·轻痕.png"
+    },
+    {
+      "id": 20,
+      "name": "凌乱药剂瓶",
+      "category": "材料",
+      "item_type": "消耗品",
+      "quality": "purple",
+      "price": 2244,
+      "stock": 31,
+      "image": "hyperframes/凌乱药剂瓶.png"
+    },
+    {
+      "id": 33,
+      "name": "编织水母·轻痕",
+      "category": "材料",
+      "item_type": "饰品",
+      "quality": "purple",
+      "price": 1653,
+      "stock": 34,
+      "image": "hyperframes/编织水母·轻痕.png"
+    },
+    {
+      "id": 30,
+      "name": "宝石和羽毛·重痕",
+      "category": "材料",
+      "item_type": "材料",
+      "quality": "purple",
+      "price": 1597,
+      "stock": 32,
+      "image": "hyperframes/宝石和羽毛·重痕.png"
+    },
+    {
+      "id": 31,
+      "name": "编织水母",
+      "category": "材料",
+      "item_type": "饰品",
+      "quality": "purple",
+      "price": 1552,
+      "stock": 60,
+      "image": "hyperframes/编织水母.png"
+    },
+    {
+      "id": 28,
+      "name": "宝石和羽毛",
+      "category": "材料",
+      "item_type": "材料",
+      "quality": "purple",
+      "price": 1500,
+      "stock": 207,
+      "image": "hyperframes/宝石和羽毛.png"
+    },
+    {
+      "id": 32,
+      "name": "别惹猫猫",
+      "category": "材料",
+      "item_type": "饰品",
+      "quality": "purple",
+      "price": 1500,
+      "stock": 163,
+      "image": "hyperframes/别惹猫猫.png"
+    },
+    {
+      "id": 29,
+      "name": "宝石和羽毛·轻痕",
+      "category": "材料",
+      "item_type": "材料",
+      "quality": "purple",
+      "price": 1500,
+      "stock": 141,
+      "image": "hyperframes/宝石和羽毛·轻痕.png"
+    },
+    {
+      "id": 35,
+      "name": "别惹猫猫·轻痕",
+      "category": "材料",
+      "item_type": "饰品",
+      "quality": "purple",
+      "price": 1500,
+      "stock": 115,
+      "image": "hyperframes/别惹猫猫·轻痕.png"
+    },
+    {
+      "id": 36,
+      "name": "别惹猫猫·重痕",
+      "category": "材料",
+      "item_type": "饰品",
+      "quality": "purple",
+      "price": 1500,
+      "stock": 46,
+      "image": "hyperframes/别惹猫猫·重痕.png"
+    },
+    {
+      "id": 10,
+      "name": "巡游涂料",
+      "category": "材料",
+      "item_type": "道具",
+      "quality": "gold",
+      "price": 1176,
+      "stock": 9999,
+      "image": "hyperframes/巡游涂料.png"
+    },
+    {
+      "id": 40,
+      "name": "\"船之美\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "purple",
+      "price": 630,
+      "stock": 414,
+      "image": "hyperframes/“船之美”的断章.png"
+    },
+    {
+      "id": 42,
+      "name": "\"昂首之旗\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "purple",
+      "price": 600,
+      "stock": 414,
+      "image": "hyperframes/“昂首之旗”的断章.png"
+    },
+    {
+      "id": 41,
+      "name": "\"白日梦\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "purple",
+      "price": 585,
+      "stock": 391,
+      "image": "hyperframes/“白日梦”的断章.png"
+    },
+    {
+      "id": 46,
+      "name": "\"偏差之时\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "purple",
+      "price": 555,
+      "stock": 407,
+      "image": "hyperframes/“偏差之时”的断章.png"
+    },
+    {
+      "id": 44,
+      "name": "\"鲇鱼号\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "purple",
+      "price": 517,
+      "stock": 485,
+      "image": "hyperframes/“鲇鱼号”的断章.png"
+    },
+    {
+      "id": 48,
+      "name": "\"此刻即未来\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "purple",
+      "price": 510,
+      "stock": 465,
+      "image": "hyperframes/“此刻即未来”的断章.png"
+    },
+    {
+      "id": 39,
+      "name": "\"沉浮罗盘\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "purple",
+      "price": 507,
+      "stock": 579,
+      "image": "hyperframes/“沉浮罗盘”的断章.png"
+    },
+    {
+      "id": 43,
+      "name": "\"老将\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "purple",
+      "price": 507,
+      "stock": 529,
+      "image": "hyperframes/“老将”的断章.png"
+    },
+    {
+      "id": 45,
+      "name": "\"机械生命\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "purple",
+      "price": 502,
+      "stock": 551,
+      "image": "hyperframes/“机械生命”的断章.png"
+    },
+    {
+      "id": 38,
+      "name": "\"船长的礼物\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "purple",
+      "price": 502,
+      "stock": 515,
+      "image": "hyperframes/“船长的礼物”的断章.png"
+    },
+    {
+      "id": 49,
+      "name": "\"划掉一页\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "purple",
+      "price": 502,
+      "stock": 460,
+      "image": "hyperframes/“划掉一页”的断章.png"
+    },
+    {
+      "id": 47,
+      "name": "\"离膛一瞬\"的断章",
+      "category": "断章",
+      "item_type": "断章",
+      "quality": "purple",
+      "price": 500,
+      "stock": 551,
+      "image": "hyperframes/“离膛一瞬”的断章.png"
+    },
+    {
+      "id": 8,
+      "name": "蔷薇石",
+      "category": "材料",
+      "item_type": "材料",
+      "quality": "gold",
+      "price": 9,
+      "stock": 9999,
+      "image": "hyperframes/蔷薇石.png"
+    },
+    {
+      "id": 7,
+      "name": "飘落轻羽",
+      "category": "材料",
+      "item_type": "武器",
+      "quality": "gold",
+      "price": null,
+      "stock": 0,
+      "image": "hyperframes/飘落轻羽.png"
+    }
+  ]
+}
